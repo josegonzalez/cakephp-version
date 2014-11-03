@@ -1,0 +1,33 @@
+{
+	"name": "josegonzalez/cakephp-version",
+	"description": "CakePHP plugin to allow versioning of records",
+	"type": "cakephp-plugin",
+	"keywords": ["cakephp", "revision", "version"],
+	"homepage": "https://github.com/josegonzalez/cakephp-version",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Jose Diaz-Gonzalez",
+			"email": "cakephp+version@josediazgonzalez.com"
+		}
+	],
+	"require": {
+		"php": ">=5.4.0",
+		"cakephp/plugin-installer": "*"
+	},
+	"require-dev": {
+		"cakephp/cakephp": "3.0.*-dev",
+		"phpunit/phpunit": "4.1.*"
+	},
+	"autoload": {
+		"psr-4": {
+			"Josegonzalez\\Version\\": "src",
+			"Josegonzalez\\Version\\Test\\Fixture\\": "tests\\Fixture"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Josegonzalez\\Version\\Test\\": "tests"
+		}
+	}
+}
