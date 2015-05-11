@@ -12,10 +12,10 @@ A CakePHP 3.x plugin that facilitates versioned database entities
 
 Add the following lines to your application's `composer.json`:
 
-```
-	"require": {
-		"josegonzalez/cakephp-version": "dev-master"
-	}
+```json
+"require": {
+	"josegonzalez/cakephp-version": "dev-master"
+}
 ```
 
 followed by the command:
@@ -28,14 +28,18 @@ Or run the following command directly without changing your `composer.json`:
 
 ## Usage
 
-In your app's `config/bootstrap.php` add: `Plugin::load('Josegonzalez/Version')`;
+In your app's `config/bootstrap.php` add:
+
+```php
+Plugin::load('Josegonzalez/Version', ['bootstrap' => true]);
+```
 
 ## Usage
 
 Run the following schema migration:
 
 ```sql
-CREATE TABLE `revision` (
+CREATE TABLE `version` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `version_id` int(11) DEFAULT NULL,
   `model` varchar(255) NOT NULL,
@@ -81,6 +85,54 @@ You can optionally retrieve all the versions:
 
 ```php
 $versions = $entity->versions();
+```
+
+### Bake Integration
+
+If you load the plugin using `'bootstrap' => true`, this plugin can be used to autodetect usage via the properly named database table. To do so, simply create a table with the `version` schema above named after the table you'd like to revision plus the suffix `_version`. For instance, to version the following table:
+
+```sql
+CREATE TABLE `posts` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `category_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'published',
+  `visibility` varchar(255) NOT NULL DEFAULT 'public',
+  `title` varchar(255) NOT NULL DEFAULT '',
+  `route` varchar(255) DEFAULT NULL,
+  `content` text,
+  `published_date` datetime DEFAULT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+
+Create the following table:
+
+```sql
+CREATE TABLE `posts_revisions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `version_id` int(11) NOT NULL,
+  `model` varchar(255) NOT NULL,
+  `foreign_key` int(11) NOT NULL,
+  `field` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+
+You can create a migration for this with the following bake command:
+
+```shell
+bin/cake bake migration create_posts_revisions version_id:integer model foreign_key:integer field content:text created
+```
+
+To track the current version in the `posts` table, you can create a migration to add the `version_id` field to the table:
+
+```shell
+bin/cake bake migration add_version_id_to_posts version_id:integer
 ```
 
 ### Configuration
