@@ -57,18 +57,17 @@ class VersionBehavior extends Behavior
         'versionField' => 'version_id',
     ];
 
-/**
- * Constructor
- *
- * @param \Cake\ORM\Table $table The table this behavior is attached to.
- * @param array $config The config for this behavior.
- */
-    public function __construct(Table $table, array $config = [])
+    /**
+     * Constructor hook method.
+     *
+     * Implement this method to avoid having to overwrite
+     * the constructor and call parent.
+     *
+     * @param array $config The configuration settings provided to this behavior.
+     * @return void
+     */
+    public function initialize(array $config)
     {
-        parent::__construct($table, $config);
-
-        $this->_table = $table;
-        $config = $this->_config;
         $this->setupFieldAssociations($config['versionTable']);
     }
 
