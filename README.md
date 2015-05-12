@@ -46,6 +46,7 @@ CREATE TABLE `version` (
   `foreign_key` int(10) NOT NULL,
   `field` varchar(255) NOT NULL,
   `content` text,
+  `created` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
