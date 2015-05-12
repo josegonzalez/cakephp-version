@@ -24,11 +24,11 @@ class ArticlesFixture extends TestFixture
 {
     public $table = 'articles';
 
-/**
- * fields property
- *
- * @var array
- */
+    /**
+     * fields property
+     *
+     * @var array
+     */
     public $fields = [
         'id' => ['type' => 'integer'],
         'author_id' => ['type' => 'integer', 'null' => true],
@@ -39,11 +39,11 @@ class ArticlesFixture extends TestFixture
         '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
     ];
 
-/**
- * records property
- *
- * @var array
- */
+    /**
+     * records property
+     *
+     * @var array
+     */
     public $records = [
         ['author_id' => 1, 'version_id' => 2, 'title' => 'First Article Version 2', 'body' => 'First Article Body Version 2', 'published' => 'N'],
     ];

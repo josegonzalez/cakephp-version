@@ -22,18 +22,18 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class VersionsFixture extends TestFixture
 {
-/**
- * table property
- *
- * @var string
- */
+    /**
+     * table property
+     *
+     * @var string
+     */
     public $table = 'version';
 
-/**
- * fields property
- *
- * @var array
- */
+    /**
+     * fields property
+     *
+     * @var array
+     */
     public $fields = [
         'id' => ['type' => 'integer'],
         'version_id' => ['type' => 'integer'],
@@ -46,11 +46,11 @@ class VersionsFixture extends TestFixture
         ],
     ];
 
-/**
- * records property
- *
- * @var array
- */
+    /**
+     * records property
+     *
+     * @var array
+     */
     public $records = [
         ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'author_id', 'content' => 1],
         ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'title', 'content' => 'First Article'],

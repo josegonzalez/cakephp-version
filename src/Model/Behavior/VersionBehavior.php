@@ -37,20 +37,20 @@ use Cake\Utility\Hash;
 class VersionBehavior extends Behavior
 {
 
-/**
- * Table instance
- *
- * @var \Cake\ORM\Table
- */
+    /**
+     * Table instance
+     *
+     * @var \Cake\ORM\Table
+     */
     protected $_table;
 
-/**
- * Default config
- *
- * These are merged with user-provided configuration when the behavior is used.
- *
- * @var array
- */
+    /**
+     * Default config
+     *
+     * These are merged with user-provided configuration when the behavior is used.
+     *
+     * @var array
+     */
     protected $_defaultConfig = [
         'implementedFinders' => ['versions' => 'findVersions'],
         'versionTable' => 'version',
@@ -71,16 +71,16 @@ class VersionBehavior extends Behavior
         $this->setupFieldAssociations($config['versionTable']);
     }
 
-/**
- * Creates the associations between the bound table and every field passed to
- * this method.
- *
- * Additionally it creates a `i18n` HasMany association that will be
- * used for fetching all versions for each record in the bound table
- *
- * @param string $table the table name to use for storing each field version
- * @return void
- */
+    /**
+     * Creates the associations between the bound table and every field passed to
+     * this method.
+     *
+     * Additionally it creates a `i18n` HasMany association that will be
+     * used for fetching all versions for each record in the bound table
+     *
+     * @param string $table the table name to use for storing each field version
+     * @return void
+     */
     public function setupFieldAssociations($table)
     {
         $alias = $this->_table->alias();
@@ -111,15 +111,15 @@ class VersionBehavior extends Behavior
         ]);
     }
 
-/**
- * Modifies the entity before it is saved so that versioned fields are persisted
- * in the database too.
- *
- * @param \Cake\Event\Event $event The beforeSave event that was fired
- * @param \Cake\ORM\Entity $entity The entity that is going to be saved
- * @param \ArrayObject $options the options passed to the save method
- * @return void
- */
+    /**
+     * Modifies the entity before it is saved so that versioned fields are persisted
+     * in the database too.
+     *
+     * @param \Cake\Event\Event $event The beforeSave event that was fired
+     * @param \Cake\ORM\Entity $entity The entity that is going to be saved
+     * @param \ArrayObject $options the options passed to the save method
+     * @return void
+     */
     public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
     {
         $table = $this->_config['versionTable'];
@@ -171,34 +171,34 @@ class VersionBehavior extends Behavior
         }
     }
 
-/**
- * Unsets the temporary `__version` property after the entity has been saved
- *
- * @param \Cake\Event\Event $event The beforeSave event that was fired
- * @param \Cake\ORM\Entity $entity The entity that is going to be saved
- * @return void
- */
+    /**
+     * Unsets the temporary `__version` property after the entity has been saved
+     *
+     * @param \Cake\Event\Event $event The beforeSave event that was fired
+     * @param \Cake\ORM\Entity $entity The entity that is going to be saved
+     * @return void
+     */
     public function afterSave(Event $event, Entity $entity)
     {
         $entity->unsetProperty('__version');
     }
 
-/**
- * Custom finder method used to retrieve all versions for the found records.
- *
- * Versioned values will be found for each entity under the property `_versions`.
- *
- * ### Example:
- *
- * {{{
- * $article = $articles->find('versions')->first();
- * $firstVersion = $article->get('_versions')[1];
- * }}}
- *
- * @param \Cake\ORM\Query $query The original query to modify
- * @param array $options Options
- * @return \Cake\ORM\Query
- */
+    /**
+     * Custom finder method used to retrieve all versions for the found records.
+     *
+     * Versioned values will be found for each entity under the property `_versions`.
+     *
+     * ### Example:
+     *
+     * {{{
+     * $article = $articles->find('versions')->first();
+     * $firstVersion = $article->get('_versions')[1];
+     * }}}
+     *
+     * @param \Cake\ORM\Query $query The original query to modify
+     * @param array $options Options
+     * @return \Cake\ORM\Query
+     */
     public function findVersions(Query $query, array $options)
     {
         $table = $this->_config['versionTable'];
@@ -215,13 +215,13 @@ class VersionBehavior extends Behavior
             ->formatResults([$this, 'groupVersions'], $query::PREPEND);
     }
 
-/**
- * Modifies the results from a table find in order to merge full version records
- * into each entity under the `_versions` key
- *
- * @param \Cake\Datasource\ResultSetInterface $results Results to modify.
- * @return \Cake\Collection\Collection
- */
+    /**
+     * Modifies the results from a table find in order to merge full version records
+     * into each entity under the `_versions` key
+     *
+     * @param \Cake\Datasource\ResultSetInterface $results Results to modify.
+     * @return \Cake\Collection\Collection
+     */
     public function groupVersions($results)
     {
         return $results->map(function ($row) {
