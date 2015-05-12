@@ -10,7 +10,7 @@ class TableEvent extends Event
 {
     public function beforeRenderEntity(CakeEvent $event)
     {
-        $this->checkAssociation($event, 'versions');
+        $this->_checkAssociation($event, 'versions');
     }
 
     public function beforeRenderTestCase(CakeEvent $event)
@@ -26,11 +26,11 @@ class TableEvent extends Event
 
     public function beforeRenderTable(CakeEvent $event)
     {
-        $this->checkAssociation($event, 'versions');
-        $this->fixVersionTables($event);
+        $this->_checkAssociation($event, 'versions');
+        $this->_fixVersionTables($event);
     }
 
-    protected function fixVersionTables(CakeEvent $event)
+    protected function _fixVersionTables(CakeEvent $event)
     {
         if (!preg_match('/Versions$/', $event->subject->viewVars['name'])) {
             return;
@@ -44,7 +44,7 @@ class TableEvent extends Event
         }
     }
 
-    protected function checkAssociation(CakeEvent $event, $tableSuffix)
+    protected function _checkAssociation(CakeEvent $event, $tableSuffix)
     {
         $subject = $event->subject;
         $connection = ConnectionManager::get($subject->viewVars['connection']);
@@ -59,13 +59,13 @@ class TableEvent extends Event
             sprintf("'versionTable' => '%s'", $versionTable),
         ];
 
-        $event->subject->viewVars['associations']['belongsTo'] = $this->modifyBelongsTo($event);
-        $event->subject->viewVars['rulesChecker'] = $this->modifyRulesChecker($event);
+        $event->subject->viewVars['associations']['belongsTo'] = $this->_modifyBelongsTo($event);
+        $event->subject->viewVars['rulesChecker'] = $this->_modifyRulesChecker($event);
 
         return true;
     }
 
-    protected function modifyBelongsTo(CakeEvent $event)
+    protected function _modifyBelongsTo(CakeEvent $event)
     {
         $belongsTo = $event->subject->viewVars['associations']['belongsTo'];
 
@@ -79,7 +79,7 @@ class TableEvent extends Event
         return $belongsTo;
     }
 
-    protected function modifyRulesChecker(CakeEvent $event)
+    protected function _modifyRulesChecker(CakeEvent $event)
     {
         $rulesChecker = $event->subject->viewVars['rulesChecker'];
 
