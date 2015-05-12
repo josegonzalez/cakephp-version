@@ -17,6 +17,7 @@ namespace Josegonzalez\Version\Model\Behavior;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Event\Event;
+use Cake\I18n\Time;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -145,6 +146,7 @@ class VersionBehavior extends Behavior
 
         $versionId = Hash::get($preexistent, '0.version_id', 0) + 1;
 
+        $created = new Time();
         foreach ($values as $field => $content) {
             if ($field == $primaryKey || $field == $versionField) {
                 continue;
@@ -156,6 +158,7 @@ class VersionBehavior extends Behavior
                 'foreign_key' => $foreignKey,
                 'field' => $field,
                 'content' => $content,
+                'created' => $created,
             ];
             $new[$field] = new Entity($data, [
                 'useSetters' => false,
