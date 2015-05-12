@@ -8,11 +8,23 @@ use Cake\Utility\Hash;
 
 class TableEvent extends Event
 {
+    /**
+     * Called before the entity template is rendered
+     *
+     * @param Event $event An Event instance
+     * @return void
+     */
     public function beforeRenderEntity(CakeEvent $event)
     {
         $this->_checkAssociation($event, 'versions');
     }
 
+    /**
+     * Called before the test case template is rendered
+     *
+     * @param Event $event An Event instance
+     * @return void
+     */
     public function beforeRenderTestCase(CakeEvent $event)
     {
         $name = $event->subject->viewVars['subject'];
@@ -24,12 +36,24 @@ class TableEvent extends Event
         }
     }
 
+    /**
+     * Called before the table template is rendered
+     *
+     * @param Event $event An Event instance
+     * @return void
+     */
     public function beforeRenderTable(CakeEvent $event)
     {
         $this->_checkAssociation($event, 'versions');
         $this->_fixVersionTables($event);
     }
 
+    /**
+     * Removes unnecessary associations
+     *
+     * @param Event $event An Event instance
+     * @return void
+     */
     protected function _fixVersionTables(CakeEvent $event)
     {
         if (!preg_match('/Versions$/', $event->subject->viewVars['name'])) {
@@ -44,6 +68,13 @@ class TableEvent extends Event
         }
     }
 
+    /**
+     * Attaches the behavior and modifies associations as necessary
+     *
+     * @param Event $event An Event instance
+     * @param string $tableSuffix a suffix for the primary table
+     * @return boolean true if modified, false otherwise
+     */
     protected function _checkAssociation(CakeEvent $event, $tableSuffix)
     {
         $subject = $event->subject;
@@ -65,6 +96,12 @@ class TableEvent extends Event
         return true;
     }
 
+    /**
+     * Removes unnecessary belongsTo associations
+     *
+     * @param Event $event An Event instance
+     * @return array
+     */
     protected function _modifyBelongsTo(CakeEvent $event)
     {
         $belongsTo = $event->subject->viewVars['associations']['belongsTo'];
@@ -79,6 +116,12 @@ class TableEvent extends Event
         return $belongsTo;
     }
 
+    /**
+     * Removes unnecessary rulesChecker entries
+     *
+     * @param Event $event An Event instance
+     * @return array
+     */
     protected function _modifyRulesChecker(CakeEvent $event)
     {
         $rulesChecker = $event->subject->viewVars['rulesChecker'];
