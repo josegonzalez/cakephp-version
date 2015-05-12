@@ -51,7 +51,7 @@ class TableEvent extends Event
             sprintf("'versionTable' => '%s'", $versionTable),
         ];
 
-        $event->subject->viewVars['associations']['belongsTo'] = $$this->modifyBelongsTo($event);
+        $event->subject->viewVars['associations']['belongsTo'] = $this->modifyBelongsTo($event);
         $event->subject->viewVars['rulesChecker'] = $this->modifyRulesChecker($event);
 
         return true;
