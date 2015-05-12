@@ -68,6 +68,7 @@ class VersionBehavior extends Behavior
      */
     public function initialize(array $config)
     {
+        $config = $this->config();
         $this->setupFieldAssociations($config['versionTable']);
     }
 
