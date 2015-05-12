@@ -118,7 +118,7 @@ CREATE TABLE `posts_versions` (
   `model` varchar(255) NOT NULL,
   `foreign_key` int(11) NOT NULL,
   `field` varchar(255) NOT NULL,
-  `content` text NOT NULL,
+  `content` text,
   `created` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -129,6 +129,8 @@ You can create a migration for this with the following bake command:
 ```shell
 bin/cake bake migration create_posts_versions version_id:integer model foreign_key:integer field content:text created
 ```
+
+> You'll also want to set the `content` field in this migration to nullable, otherwise you won't be able to version fields that can be nulled.
 
 To track the current version in the `posts` table, you can create a migration to add the `version_id` field to the table:
 
