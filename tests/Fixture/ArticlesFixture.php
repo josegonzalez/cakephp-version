@@ -20,32 +20,31 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Short description for class.
  *
  */
-class ArticlesFixture extends TestFixture {
-
-	public $table = 'articles';
+class ArticlesFixture extends TestFixture
+{
+    public $table = 'articles';
 
 /**
  * fields property
  *
  * @var array
  */
-	public $fields = array(
-		'id' => ['type' => 'integer'],
-		'author_id' => ['type' => 'integer', 'null' => true],
-		'version_id' => ['type' => 'integer', 'null' => true],
-		'title' => ['type' => 'string', 'null' => true],
-		'body' => 'text',
-		'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
-		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
-	);
+    public $fields = [
+        'id' => ['type' => 'integer'],
+        'author_id' => ['type' => 'integer', 'null' => true],
+        'version_id' => ['type' => 'integer', 'null' => true],
+        'title' => ['type' => 'string', 'null' => true],
+        'body' => 'text',
+        'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+    ];
 
 /**
  * records property
  *
  * @var array
  */
-	public $records = array(
-		array('author_id' => 1, 'version_id' => 2, 'title' => 'First Article Version 2', 'body' => 'First Article Body Version 2', 'published' => 'N'),
-	);
-
+    public $records = [
+        ['author_id' => 1, 'version_id' => 2, 'title' => 'First Article Version 2', 'body' => 'First Article Body Version 2', 'published' => 'N'],
+    ];
 }

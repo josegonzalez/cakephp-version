@@ -20,45 +20,45 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Class TranslateFixture
  *
  */
-class VersionsFixture extends TestFixture {
-
+class VersionsFixture extends TestFixture
+{
 /**
  * table property
  *
  * @var string
  */
-	public $table = 'version';
+    public $table = 'version';
 
 /**
  * fields property
  *
  * @var array
  */
-	public $fields = array(
-		'id' => ['type' => 'integer'],
-		'version_id' => ['type' => 'integer'],
-		'model' => ['type' => 'string', 'null' => false],
-		'foreign_key' => ['type' => 'integer', 'null' => false],
-		'field' => ['type' => 'string', 'null' => false],
-		'content' => ['type' => 'text'],
-		'_constraints' => [
-			'primary' => ['type' => 'primary', 'columns' => ['id']],
-		],
-	);
+    public $fields = [
+        'id' => ['type' => 'integer'],
+        'version_id' => ['type' => 'integer'],
+        'model' => ['type' => 'string', 'null' => false],
+        'foreign_key' => ['type' => 'integer', 'null' => false],
+        'field' => ['type' => 'string', 'null' => false],
+        'content' => ['type' => 'text'],
+        '_constraints' => [
+            'primary' => ['type' => 'primary', 'columns' => ['id']],
+        ],
+    ];
 
 /**
  * records property
  *
  * @var array
  */
-	public $records = array(
-		array('version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'author_id', 'content' => 1),
-		array('version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'title', 'content' => 'First Article'),
-		array('version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'body', 'content' => 'First Article Body'),
-		array('version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'published', 'content' => 'Y'),
-		array('version_id' => 2, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'author_id', 'content' => 1),
-		array('version_id' => 2, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'title', 'content' => 'First Article Version 2'),
-		array('version_id' => 2, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'body', 'content' => 'First Article Body Version 2'),
-		array('version_id' => 2, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'published', 'content' => 'N'),
-	);
+    public $records = [
+        ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'author_id', 'content' => 1],
+        ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'title', 'content' => 'First Article'],
+        ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'body', 'content' => 'First Article Body'],
+        ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'published', 'content' => 'Y'],
+        ['version_id' => 2, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'author_id', 'content' => 1],
+        ['version_id' => 2, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'title', 'content' => 'First Article Version 2'],
+        ['version_id' => 2, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'body', 'content' => 'First Article Body Version 2'],
+        ['version_id' => 2, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'published', 'content' => 'N'],
+    ];
 }
