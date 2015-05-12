@@ -40,7 +40,6 @@ trait VersionTrait
 
         $table = TableRegistry::get($this->source());
         $entities = $table->find('versions', $conditions)
-                        ->bufferResults(false)
                         ->all();
 
         if (empty($entities)) {
