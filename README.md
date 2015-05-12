@@ -89,7 +89,7 @@ $versions = $entity->versions();
 
 ### Bake Integration
 
-If you load the plugin using `'bootstrap' => true`, this plugin can be used to autodetect usage via the properly named database table. To do so, simply create a table with the `version` schema above named after the table you'd like to revision plus the suffix `_version`. For instance, to version the following table:
+If you load the plugin using `'bootstrap' => true`, this plugin can be used to autodetect usage via the properly named database table. To do so, simply create a table with the `version` schema above named after the table you'd like to revision plus the suffix `_versions`. For instance, to version the following table:
 
 ```sql
 CREATE TABLE `posts` (
@@ -111,7 +111,7 @@ CREATE TABLE `posts` (
 Create the following table:
 
 ```sql
-CREATE TABLE `posts_revisions` (
+CREATE TABLE `posts_versions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `version_id` int(11) NOT NULL,
   `model` varchar(255) NOT NULL,
@@ -126,7 +126,7 @@ CREATE TABLE `posts_revisions` (
 You can create a migration for this with the following bake command:
 
 ```shell
-bin/cake bake migration create_posts_revisions version_id:integer model foreign_key:integer field content:text created
+bin/cake bake migration create_posts_versions version_id:integer model foreign_key:integer field content:text created
 ```
 
 To track the current version in the `posts` table, you can create a migration to add the `version_id` field to the table:
