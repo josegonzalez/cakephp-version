@@ -8,18 +8,26 @@ use Cake\Utility\Hash;
 
 class TableEvent extends Event
 {
-    public function beforeRenderTable(CakeEvent $event)
+    public function beforeRenderEntity(CakeEvent $event)
     {
-        $tableSuffixes = ['versions'];
-        foreach ($tableSuffixes as $tableSuffix) {
-            if ($this->checkAssociation($event, $tableSuffix)) {
-                break;
+        $this->checkAssociation($event, 'versions');
+    }
+
+    public function beforeRenderTestCase(CakeEvent $event)
+    {
+        $name = $event->subject->viewVars['subject'];
+        $pattern = '/^' . preg_quote($name) . '_(\w+)_version$/';
+        foreach (array_keys($event->subject->viewVars['fixtures']) as $key) {
+            if (preg_match($pattern, $key)) {
+                unset($event->subject->viewVars['fixtures'][$key]);
             }
         }
+    }
 
+    public function beforeRenderTable(CakeEvent $event)
+    {
+        $this->checkAssociation($event, 'versions');
         $this->fixVersionTables($event);
-
-        return $event;
     }
 
     protected function fixVersionTables(CakeEvent $event)

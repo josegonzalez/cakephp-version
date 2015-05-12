@@ -38,6 +38,7 @@ abstract class Event implements EventListenerInterface
             'Shell/shell' => 'beforeRenderShell',
             'View/cell' => 'beforeRenderCell',
             'View/helper' => 'beforeRenderHelper',
+            'tests/test_case' => 'beforeRenderTestCase',
         ];
 
         $events = [];
