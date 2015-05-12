@@ -7,13 +7,13 @@ use LogicException;
 
 trait VersionTrait
 {
-/**
- * Retrieves a specified version for the current entity
- *
- * @param int $versionId The version number to retrieve
- * @param bool $reset If true, will re-retrieve the related version collection
- * @return \Cake\ORM\Entity
- */
+    /**
+     * Retrieves a specified version for the current entity
+     *
+     * @param int $versionId The version number to retrieve
+     * @param bool $reset If true, will re-retrieve the related version collection
+     * @return \Cake\ORM\Entity
+     */
     public function version($versionId, $reset = false)
     {
         $versions = $this->versions($reset);
@@ -24,12 +24,12 @@ trait VersionTrait
         return $versions[$versionId];
     }
 
-/**
- * Retrieves the related versions for the current entity
- *
- * @param bool $reset If true, will re-retrieve the related version collection
- * @return \Cake\Collection\Collection
- */
+    /**
+     * Retrieves the related versions for the current entity
+     *
+     * @param bool $reset If true, will re-retrieve the related version collection
+     * @return \Cake\Collection\Collection
+     */
     public function versions($reset = false)
     {
         if ($reset === false && $this->has('_versions')) {
