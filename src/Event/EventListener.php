@@ -1,11 +1,11 @@
 <?php
-namespace Josegonzalez\Version\Event\Bake;
+namespace Josegonzalez\Version\Event;
 
 use Cake\Event\Event as CakeEvent;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerTrait;
 
-abstract class Event implements EventListenerInterface
+abstract class EventListener implements EventListenerInterface
 {
     use EventManagerTrait;
 
@@ -32,7 +32,7 @@ abstract class Event implements EventListenerInterface
      *
      * @return void
      */
-    public function __invoke()
+    public function execute()
     {
         $methods = array_values($this->implementedEvents());
         foreach ($methods as $method) {

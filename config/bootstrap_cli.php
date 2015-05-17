@@ -1,9 +1,8 @@
 <?php
 use Cake\Event\Event;
 use Cake\Event\EventManager;
-use Josegonzalez\Version\Event\Bake\TableEvent;
+use Josegonzalez\Version\Event\VersionListener;
 
 EventManager::instance()->attach(function (Event $event) {
-    $tableEvent = new TableEvent($event);
-    $tableEvent();
+    (new VersionListener($event))->execute();
 }, 'Bake.beforeRender');

@@ -1,12 +1,12 @@
 <?php
-namespace Josegonzalez\Version\Event\Bake;
+namespace Josegonzalez\Version\Event;
 
 use Cake\Datasource\ConnectionManager;
-use Cake\Event\Event as CakeEvent;
+use Cake\Event\Event;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 
-class TableEvent extends Event
+class VersionListener extends EventListener
 {
     /**
      * Called before the entity template is rendered
@@ -14,7 +14,7 @@ class TableEvent extends Event
      * @param Event $event An Event instance
      * @return void
      */
-    public function beforeRenderEntity(CakeEvent $event)
+    public function beforeRenderEntity(Event $event)
     {
         $this->_checkAssociation($event, 'versions');
     }
@@ -25,7 +25,7 @@ class TableEvent extends Event
      * @param Event $event An Event instance
      * @return void
      */
-    public function beforeRenderTestCase(CakeEvent $event)
+    public function beforeRenderTestCase(Event $event)
     {
         $name = $event->subject->viewVars['subject'];
         $pattern = '/^' . preg_quote($name) . '_(\w+)_version$/';
@@ -42,7 +42,7 @@ class TableEvent extends Event
      * @param Event $event An Event instance
      * @return void
      */
-    public function beforeRenderTable(CakeEvent $event)
+    public function beforeRenderTable(Event $event)
     {
         $this->_checkAssociation($event, 'versions');
         $this->_fixVersionTables($event);
@@ -54,7 +54,7 @@ class TableEvent extends Event
      * @param Event $event An Event instance
      * @return void
      */
-    protected function _fixVersionTables(CakeEvent $event)
+    protected function _fixVersionTables(Event $event)
     {
         if (!preg_match('/Versions$/', $event->subject->viewVars['name'])) {
             return;
@@ -75,7 +75,7 @@ class TableEvent extends Event
      * @param string $tableSuffix a suffix for the primary table
      * @return boolean true if modified, false otherwise
      */
-    protected function _checkAssociation(CakeEvent $event, $tableSuffix)
+    protected function _checkAssociation(Event $event, $tableSuffix)
     {
         $subject = $event->subject;
         $connection = ConnectionManager::get($subject->viewVars['connection']);
@@ -102,7 +102,7 @@ class TableEvent extends Event
      * @param Event $event An Event instance
      * @return array
      */
-    protected function _modifyBelongsTo(CakeEvent $event)
+    protected function _modifyBelongsTo(Event $event)
     {
         $belongsTo = $event->subject->viewVars['associations']['belongsTo'];
 
@@ -122,7 +122,7 @@ class TableEvent extends Event
      * @param Event $event An Event instance
      * @return array
      */
-    protected function _modifyRulesChecker(CakeEvent $event)
+    protected function _modifyRulesChecker(Event $event)
     {
         $rulesChecker = $event->subject->viewVars['rulesChecker'];
 
