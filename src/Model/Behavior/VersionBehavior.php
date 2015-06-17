@@ -55,6 +55,7 @@ class VersionBehavior extends Behavior
         'implementedFinders' => ['versions' => 'findVersions'],
         'versionTable' => 'version',
         'versionField' => 'version_id',
+        'fields' => null
     ];
 
     /**
@@ -85,8 +86,8 @@ class VersionBehavior extends Behavior
     public function setupFieldAssociations($table)
     {
         $alias = $this->_table->alias();
-        $schema = $this->_table->schema();
-        foreach ($schema->columns() as $field) {
+
+        foreach ($this->_fields() as $field) {
             $name = $this->_table->alias() . '_' . $field . '_version';
             $target = TableRegistry::get($name);
             $target->table($table);
@@ -127,8 +128,8 @@ class VersionBehavior extends Behavior
         $newOptions = [$table => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
-        $schema = $this->_table->schema();
-        $values = $entity->extract($schema->columns());
+        $fields = $this->_fields();
+        $values = $entity->extract($fields);
 
         $model = $this->_table->alias();
         $primaryKey = (array)$this->_table->primaryKey();
@@ -167,7 +168,7 @@ class VersionBehavior extends Behavior
         }
 
         $entity->set('__version', $new);
-        if (!empty($versionField) && in_array($versionField, $schema->columns())) {
+        if (!empty($versionField) && in_array($versionField, $fields)) {
             $entity->set($this->_config['versionField'], $versionId);
         }
     }
@@ -211,6 +212,7 @@ class VersionBehavior extends Behavior
                 if (!empty($options['versionId'])) {
                     $q->where(["$table.version_id IN" => $options['versionId']]);
                 }
+                $q->where(['field IN' => $this->_fields()]);
                 return $q;
             }])
             ->formatResults([$this, 'groupVersions'], $query::PREPEND);
@@ -231,7 +233,7 @@ class VersionBehavior extends Behavior
 
             $result = [];
             foreach ($grouped->combine('field', 'content', 'version_id') as $versionId => $keys) {
-                $version = new Entity($keys + ['version_id' => $versionId], [
+                $version = $this->_table->newEntity($keys + ['version_id' => $versionId], [
                     'markNew' => false,
                     'useSetters' => false,
                     'markClean' => true
@@ -245,5 +247,21 @@ class VersionBehavior extends Behavior
             $row->clean();
             return $row;
         });
+    }
+
+    /**
+     * Returns an array of fields to be versioned.
+     *
+     * @return array
+     */
+    protected function _fields()
+    {
+        $schema = $this->_table->schema();
+        $fields = $schema->columns();
+        if ($this->_config['fields'] !== null) {
+            $fields = array_intersect($fields, (array)$this->_config['fields']);
+        }
+
+        return $fields;
     }
 }
