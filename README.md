@@ -1,10 +1,11 @@
-# Version
+[![Build Status](https://img.shields.io/travis/josegonzalez/cakephp-version/master.svg?style=flat-square)](https://travis-ci.org/josegonzalez/cakephp-version) 
+[![Coverage Status](https://img.shields.io/coveralls/josegonzalez/cakephp-version.svg?style=flat-square)](https://coveralls.io/r/josegonzalez/cakephp-version?branch=master) 
+[![Total Downloads](https://img.shields.io/packagist/dt/josegonzalez/cakephp-version.svg?style=flat-square)](https://packagist.org/packages/josegonzalez/cakephp-version) 
+[![Latest Stable Version](https://img.shields.io/packagist/v/josegonzalez/cakephp-version.svg?style=flat-square)](https://packagist.org/packages/josegonzalez/cakephp-version) 
+[![Documentation Status](https://readthedocs.org/projects/cakephp-version/badge/?version=latest&style=flat-square)](https://readthedocs.org/projects/cakephp-version/?badge=latest)
+[![Gratipay](https://img.shields.io/gratipay/josegonzalez.svg?style=flat-square)](https://gratipay.com/~josegonzalez/)
 
-[![Build Status](https://api.travis-ci.org/josegonzalez/cakephp-version.png)](https://travis-ci.org/josegonzalez/cakephp-version)
-[![Latest Stable Version](https://poser.pugx.org/josegonzalez/cakephp-version/v/stable.svg)](https://packagist.org/packages/josegonzalez/cakephp-version)
-[![Total Downloads](https://poser.pugx.org/josegonzalez/cakephp-version/downloads.svg)](https://packagist.org/packages/josegonzalez/cakephp-version)
-[![Latest Unstable Version](https://poser.pugx.org/josegonzalez/cakephp-version/v/unstable.svg)](https://packagist.org/packages/josegonzalez/cakephp-version)
-[![License](https://poser.pugx.org/josegonzalez/cakephp-version/license.svg)](https://packagist.org/packages/josegonzalez/cakephp-version)
+# Version
 
 A CakePHP 3.x plugin that facilitates versioned database entities
 
