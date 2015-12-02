@@ -73,7 +73,7 @@ class VersionListener extends EventListener
      *
      * @param Event $event An Event instance
      * @param string $tableSuffix a suffix for the primary table
-     * @return boolean true if modified, false otherwise
+     * @return bool true if modified, false otherwise
      */
     protected function _checkAssociation(Event $event, $tableSuffix)
     {
