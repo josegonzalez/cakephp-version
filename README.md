@@ -1,7 +1,7 @@
-[![Build Status](https://img.shields.io/travis/josegonzalez/cakephp-version/master.svg?style=flat-square)](https://travis-ci.org/josegonzalez/cakephp-version) 
-[![Coverage Status](https://img.shields.io/coveralls/josegonzalez/cakephp-version.svg?style=flat-square)](https://coveralls.io/r/josegonzalez/cakephp-version?branch=master) 
-[![Total Downloads](https://img.shields.io/packagist/dt/josegonzalez/cakephp-version.svg?style=flat-square)](https://packagist.org/packages/josegonzalez/cakephp-version) 
-[![Latest Stable Version](https://img.shields.io/packagist/v/josegonzalez/cakephp-version.svg?style=flat-square)](https://packagist.org/packages/josegonzalez/cakephp-version) 
+[![Build Status](https://img.shields.io/travis/josegonzalez/cakephp-version/master.svg?style=flat-square)](https://travis-ci.org/josegonzalez/cakephp-version)
+[![Coverage Status](https://img.shields.io/coveralls/josegonzalez/cakephp-version.svg?style=flat-square)](https://coveralls.io/r/josegonzalez/cakephp-version?branch=master)
+[![Total Downloads](https://img.shields.io/packagist/dt/josegonzalez/cakephp-version.svg?style=flat-square)](https://packagist.org/packages/josegonzalez/cakephp-version)
+[![Latest Stable Version](https://img.shields.io/packagist/v/josegonzalez/cakephp-version.svg?style=flat-square)](https://packagist.org/packages/josegonzalez/cakephp-version)
 [![Documentation Status](https://readthedocs.org/projects/cakephp-version/badge/?version=latest&style=flat-square)](https://readthedocs.org/projects/cakephp-version/?badge=latest)
 [![Gratipay](https://img.shields.io/gratipay/josegonzalez.svg?style=flat-square)](https://gratipay.com/~josegonzalez/)
 
@@ -15,7 +15,7 @@ Add the following lines to your application's `composer.json`:
 
 ```json
 "require": {
-	"josegonzalez/cakephp-version": "dev-master"
+    "josegonzalez/cakephp-version": "dev-master"
 }
 ```
 
@@ -41,14 +41,14 @@ Run the following schema migration:
 
 ```sql
 CREATE TABLE `version` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `version_id` int(11) DEFAULT NULL,
-  `model` varchar(255) NOT NULL,
-  `foreign_key` int(10) NOT NULL,
-  `field` varchar(255) NOT NULL,
-  `content` text,
-  `created` datetime NOT NULL,
-  PRIMARY KEY (`id`)
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `version_id` int(11) DEFAULT NULL,
+    `model` varchar(255) NOT NULL,
+    `foreign_key` int(10) NOT NULL,
+    `field` varchar(255) NOT NULL,
+    `content` text,
+    `created` datetime NOT NULL,
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 
@@ -64,7 +64,7 @@ And then include the trait in the entity class:
 
 ```php
 class PostEntity extends Entity {
-	use VersionTrait;
+    use VersionTrait;
 }
 ```
 
@@ -72,7 +72,7 @@ Attach the behavior in the models you want with:
 
 ```php
 public function initialize(array $config) {
-	$this->addBehavior('Josegonzalez/Version.Version');
+    $this->addBehavior('Josegonzalez/Version.Version');
 }
 ```
 
@@ -95,18 +95,18 @@ If you load the plugin using `'bootstrap' => true`, this plugin can be used to a
 
 ```sql
 CREATE TABLE `posts` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `category_id` int(11) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `status` varchar(255) NOT NULL DEFAULT 'published',
-  `visibility` varchar(255) NOT NULL DEFAULT 'public',
-  `title` varchar(255) NOT NULL DEFAULT '',
-  `route` varchar(255) DEFAULT NULL,
-  `content` text,
-  `published_date` datetime DEFAULT NULL,
-  `created` datetime NOT NULL,
-  `modified` datetime NOT NULL,
-  PRIMARY KEY (`id`)
+    `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `category_id` int(11) DEFAULT NULL,
+    `user_id` int(11) DEFAULT NULL,
+    `status` varchar(255) NOT NULL DEFAULT 'published',
+    `visibility` varchar(255) NOT NULL DEFAULT 'public',
+    `title` varchar(255) NOT NULL DEFAULT '',
+    `route` varchar(255) DEFAULT NULL,
+    `content` text,
+    `published_date` datetime DEFAULT NULL,
+    `created` datetime NOT NULL,
+    `modified` datetime NOT NULL,
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 
@@ -114,14 +114,14 @@ Create the following table:
 
 ```sql
 CREATE TABLE `posts_versions` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `version_id` int(11) NOT NULL,
-  `model` varchar(255) NOT NULL,
-  `foreign_key` int(11) NOT NULL,
-  `field` varchar(255) NOT NULL,
-  `content` text,
-  `created` datetime NOT NULL,
-  PRIMARY KEY (`id`)
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `version_id` int(11) NOT NULL,
+    `model` varchar(255) NOT NULL,
+    `foreign_key` int(11) NOT NULL,
+    `field` varchar(255) NOT NULL,
+    `content` text,
+    `created` datetime NOT NULL,
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 
