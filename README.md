@@ -89,6 +89,49 @@ You can optionally retrieve all the versions:
 $versions = $entity->versions();
 ```
 
+### Storing Additional MetaData
+
+`cakephp-version` dispatches an event `Model.Version.beforeSave` which you can optionally handle to attach additional meta-data about the version.
+
+Add the necessary additional fields to your migration
+
+```sql
+CREATE TABLE `version` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `version_id` int(11) DEFAULT NULL,
+    `model` varchar(255) NOT NULL,
+    `foreign_key` int(10) NOT NULL,
+    `field` varchar(255) NOT NULL,
+    `content` text,
+    `created` datetime NOT NULL,
+    `custom_field1` varchar(255) NOT NULL,
+    `custom_field2` varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+
+and then handle the event to pass in additional metadata, for example:
+
+```php
+use Cake\Event\EventListenerInterface;
+
+class VersionListener implements EventListenerInterface {
+
+    public function implementedEvents() {
+        return array(
+            'Model.Version.beforeSave' => 'insertAdditionalData',
+        );
+    }
+
+    public function insertAdditionalData($event) {
+        return [
+            'custom_field1' => 'foo',
+            'custom_field2' => 'bar'
+        ];
+    }
+}
+```
+
 ### Bake Integration
 
 If you load the plugin using `'bootstrap' => true`, this plugin can be used to autodetect usage via the properly named database table. To do so, simply create a table with the `version` schema above named after the table you'd like to revision plus the suffix `_versions`. For instance, to version the following table:
