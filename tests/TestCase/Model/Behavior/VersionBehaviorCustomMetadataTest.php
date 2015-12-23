@@ -3,13 +3,13 @@ namespace Josegonzalez\Version\Test\TestCase\Model\Behavior;
 
 use Cake\Collection\Collection;
 use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\I18n\I18n;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Josegonzalez\Version\Model\Behavior\VersionBehavior;
 use Josegonzalez\Version\Model\Behavior\Version\VersionTrait;
-use Cake\Event\EventManager;
 
 class VersionBehaviorCustomMetadataTest extends TestCase
 {
