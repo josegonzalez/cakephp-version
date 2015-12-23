@@ -3,6 +3,7 @@ namespace Josegonzalez\Version\Test\TestCase\Model\Behavior;
 
 use Cake\Collection\Collection;
 use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\I18n\I18n;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
@@ -139,5 +140,71 @@ class VersionBehaviorTest extends TestCase
 
         $this->assertArrayHasKey('title', $version);
         $this->assertArrayNotHasKey('body', $version);
+    }
+
+    public function testSaveWithValidMetaData()
+    {
+        $table = TableRegistry::get('Articles', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
+        ]);
+        $table->addBehavior('Josegonzalez/Version.Version');
+        $article = $table->find('all')->first();
+        EventManager::instance()->attach(
+            function ($event) {
+                return [
+                    'custom_field' => 'bar',
+                ];
+            },
+            'Model.Version.beforeSave'
+        );
+        $versionTable = TableRegistry::get('Version');
+
+        $results = $versionTable->find('all')
+                                ->where(['foreign_key' => $article->id])
+                                ->hydrate(false)
+                                ->toArray();
+        $this->assertEquals('foo', $results[4]['custom_field']);
+
+        $article->title = 'Titulo';
+        $table->save($article);
+
+        $results = $versionTable->find('all')
+                                ->where(['foreign_key' => $article->id])
+                                ->hydrate(false)
+                                ->toArray();
+        $this->assertEquals('bar', $results[9]['custom_field']);
+    }
+
+    public function testSaveWithInvalidMetaData()
+    {
+        $table = TableRegistry::get('Articles', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
+        ]);
+        $table->addBehavior('Josegonzalez/Version.Version');
+        $article = $table->find('all')->first();
+        EventManager::instance()->attach(
+            function ($event) {
+                return [
+                    'nonsense' => 'bar',
+                ];
+            },
+            'Model.Version.beforeSave'
+        );
+        $versionTable = TableRegistry::get('Version');
+
+        $results = $versionTable->find('all')
+                                ->where(['foreign_key' => $article->id])
+                                ->hydrate(false)
+                                ->toArray();
+        $this->assertEquals('foo', $results[4]['custom_field']);
+
+        $article->title = 'Titulo';
+        $table->save($article);
+
+        $results = $versionTable->find('all')
+                                ->where(['foreign_key' => $article->id])
+                                ->hydrate(false)
+                                ->toArray();
+        $this->assertNull($results[9]['custom_field']);
     }
 }
