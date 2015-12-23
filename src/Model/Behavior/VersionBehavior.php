@@ -17,6 +17,7 @@ namespace Josegonzalez\Version\Model\Behavior;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\I18n\Time;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
@@ -161,6 +162,13 @@ class VersionBehavior extends Behavior
                 'content' => $content,
                 'created' => $created,
             ];
+
+            $event = new Event('Model.Version.beforeSave', $this, $options);
+            $userData = EventManager::instance()->dispatch($event);
+            if (isset($userData->result) && is_array($userData->result)) {
+                $data = array_merge($data, $userData->result);
+            }
+
             $new[$field] = new Entity($data, [
                 'useSetters' => false,
                 'markNew' => true
