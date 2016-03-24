@@ -36,10 +36,11 @@ trait VersionTrait
             return $this->get('_versions');
         }
 
-        $conditions = ['primaryKey' => $this->id];
-
         $table = TableRegistry::get($this->source());
-        $entities = $table->find('versions', $conditions)
+        $primaryKey = $table->primaryKey();
+
+        $conditions = [$primaryKey => $this->id];
+        $entities = $table->find('versions', ['conditions' => $conditions])
                         ->all();
 
         if (empty($entities)) {
