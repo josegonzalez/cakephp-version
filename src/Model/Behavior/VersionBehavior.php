@@ -135,7 +135,7 @@ class VersionBehavior extends Behavior
         $model = $this->_table->alias();
         $primaryKey = (array)$this->_table->primaryKey();
         $primaryKey = current($primaryKey);
-        $foreignKey = $entity->get($primaryKey);
+        $foreign_key = $entity->get($primaryKey);
         $versionField = $this->_config['versionField'];
 
         $preexistent = TableRegistry::get($table)->find()
@@ -157,7 +157,7 @@ class VersionBehavior extends Behavior
             $data = [
                 'version_id' => $versionId,
                 'model' => $model,
-                'foreign_key' => $foreignKey,
+                'foreign_key' => $foreign_key,
                 'field' => $field,
                 'content' => $content,
                 'created' => $created,
