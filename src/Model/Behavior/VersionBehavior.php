@@ -140,7 +140,10 @@ class VersionBehavior extends Behavior
 
         $preexistent = TableRegistry::get($table)->find()
             ->select(['version_id'])
-            ->where(compact('foreign_key', 'model'))
+            ->where([
+                'foreign_key' => $foreignKey,
+                'model' => $model
+            ])
             ->order(['id desc'])
             ->limit(1)
             ->hydrate(false)

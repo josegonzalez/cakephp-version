@@ -61,5 +61,17 @@ class VersionsFixture extends TestFixture
         ['version_id' => 2, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'title', 'content' => 'First Article Version 2', 'custom_field' => 'foo'],
         ['version_id' => 2, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'body', 'content' => 'First Article Body Version 2', 'custom_field' => 'foo'],
         ['version_id' => 2, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'published', 'content' => 'N', 'custom_field' => 'foo'],
+        ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 2, 'field' => 'author_id', 'content' => 2],
+        ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 2, 'field' => 'title', 'content' => 'Second Article version 1'],
+        ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 2, 'field' => 'body', 'content' => 'Second Article Body'],
+        ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 2, 'field' => 'published', 'content' => 'Y'],
+        ['version_id' => 2, 'model' => 'Articles', 'foreign_key' => 2, 'field' => 'author_id', 'content' => 2],
+        ['version_id' => 2, 'model' => 'Articles', 'foreign_key' => 2, 'field' => 'title', 'content' => 'Second Article version 2'],
+        ['version_id' => 2, 'model' => 'Articles', 'foreign_key' => 2, 'field' => 'body', 'content' => 'Second Article Body'],
+        ['version_id' => 2, 'model' => 'Articles', 'foreign_key' => 2, 'field' => 'published', 'content' => 'Y'],
+        ['version_id' => 3, 'model' => 'Articles', 'foreign_key' => 2, 'field' => 'author_id', 'content' => 2],
+        ['version_id' => 3, 'model' => 'Articles', 'foreign_key' => 2, 'field' => 'title', 'content' => 'Second Article version 3'],
+        ['version_id' => 3, 'model' => 'Articles', 'foreign_key' => 2, 'field' => 'body', 'content' => 'Second Article Body'],
+        ['version_id' => 3, 'model' => 'Articles', 'foreign_key' => 2, 'field' => 'published', 'content' => 'Y'],
     ];
 }
