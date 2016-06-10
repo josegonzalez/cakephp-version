@@ -18,13 +18,13 @@ use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
-use Cake\I18n\Time;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
+use DateTime;
 
 /**
  * This behavior provides a way to version dynamic data by keeping versions
@@ -152,7 +152,7 @@ class VersionBehavior extends Behavior
 
         $versionId = Hash::get($preexistent, '0.version_id', 0) + 1;
 
-        $created = new Time();
+        $created = new DateTime();
         foreach ($values as $field => $content) {
             if (in_array($field, $primaryKey) || $field == $versionField) {
                 continue;
