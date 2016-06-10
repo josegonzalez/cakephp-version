@@ -214,9 +214,15 @@ class VersionBehavior extends Behavior
     {
         $table = $this->_config['versionTable'];
         return $query
-            ->contain([$table => function ($q) use ($table, $options) {
+            ->contain([$table => function ($q) use ($table, $options, $query) {
                 if (!empty($options['primaryKey'])) {
-                    $q->where(["$table.foreign_key IN" => $options['primaryKey']]);
+                    $foreignKey = (array)$this->_config['foreignKey'];
+                    $aliasedFK = [];
+                    foreach ($foreignKey as $field) {
+                        $aliasedFK[] = $query->aliasField($field) . ' IN';
+                    }
+                    $conditions = array_combine($aliasedFK, (array)$options['primaryKey']);
+                    $q->where($conditions);
                 }
                 if (!empty($options['versionId'])) {
                     $q->where(["$table.version_id IN" => $options['versionId']]);
