@@ -246,12 +246,13 @@ class VersionBehavior extends Behavior
     public function groupVersions($results)
     {
         return $results->map(function ($row) {
+            $versionField = $this->_config['versionField'];
             $versions = (array)$row->get('__version');
             $grouped = new Collection($versions);
 
             $result = [];
             foreach ($grouped->combine('field', 'content', 'version_id') as $versionId => $keys) {
-                $version = $this->_table->newEntity($keys + ['version_id' => $versionId], [
+                $version = $this->_table->newEntity($keys + [$versionField => $versionId], [
                     'markNew' => false,
                     'useSetters' => false,
                     'markClean' => true
