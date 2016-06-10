@@ -277,7 +277,7 @@ class VersionBehavior extends Behavior
     /**
      * Returns an array with foreignKey value.
      *
-     * @param \Cake\Datasource\EntityInterface $entity
+     * @param \Cake\Datasource\EntityInterface $entity Entity.
      * @return array
      */
     protected function _extractForeignKey($entity)
