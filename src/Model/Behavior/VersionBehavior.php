@@ -90,12 +90,10 @@ class VersionBehavior extends Behavior
         $alias = $this->_table->alias();
 
         foreach ($this->_fields() as $field) {
-            $name = $this->_table->alias() . '_' . $field . '_version';
-            $target = TableRegistry::get($name);
-            $target->table($table);
+            $name = $alias . '_' . $field . '_version';
 
             $this->_table->hasOne($name, [
-                'targetTable' => $target,
+                'className' => $table,
                 'foreignKey' => $this->_config['foreignKey'],
                 'joinType' => 'LEFT',
                 'conditions' => [
@@ -106,10 +104,13 @@ class VersionBehavior extends Behavior
             ]);
         }
 
-        $this->_table->hasMany($table, [
+        list(, $name) = pluginSplit($table);
+
+        $this->_table->hasMany($name, [
+            'className' => $table,
             'foreignKey' => $this->_config['foreignKey'],
             'strategy' => 'subquery',
-            'conditions' => ["$table.model" => $alias],
+            'conditions' => ["$name.model" => $alias],
             'propertyName' => '__version',
             'dependent' => true
         ]);
@@ -126,8 +127,9 @@ class VersionBehavior extends Behavior
      */
     public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
     {
-        $table = $this->_config['versionTable'];
-        $newOptions = [$table => ['validate' => false]];
+        $alias = $this->_config['versionTable'];
+        list(, $name) = pluginSplit($alias);
+        $newOptions = [$name => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
         $fields = $this->_fields();
@@ -138,7 +140,8 @@ class VersionBehavior extends Behavior
         $foreignKey = $this->_extractForeignKey($entity);
         $versionField = $this->_config['versionField'];
 
-        $preexistent = TableRegistry::get($table)->find()
+        $table = TableRegistry::get($alias);
+        $preexistent = $table->find()
             ->select(['version_id'])
             ->where([
                 'model' => $model
@@ -170,7 +173,8 @@ class VersionBehavior extends Behavior
                 $data = array_merge($data, $userData->result);
             }
 
-            $new[$field] = new Entity($data, [
+            $entityClass = $table->entityClass();
+            $new[$field] = new $entityClass($data, [
                 'useSetters' => false,
                 'markNew' => true
             ]);
