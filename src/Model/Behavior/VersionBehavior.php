@@ -227,7 +227,7 @@ class VersionBehavior extends Behavior
                 if (!empty($options['versionId'])) {
                     $q->where(["$table.version_id IN" => $options['versionId']]);
                 }
-                $q->where(['field IN' => $this->_fields()]);
+                $q->where(["$table.field IN" => $this->_fields()]);
                 return $q;
             }])
             ->formatResults([$this, 'groupVersions'], $query::PREPEND);
