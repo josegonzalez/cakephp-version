@@ -104,7 +104,7 @@ class VersionBehavior extends Behavior
             ]);
         }
 
-        list(, $name) = pluginSplit($table);
+        $name = $this->_associationName($table);
 
         $this->_table->hasMany($name, [
             'className' => $table,
@@ -127,8 +127,7 @@ class VersionBehavior extends Behavior
      */
     public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
     {
-        $alias = $this->_config['versionTable'];
-        list(, $name) = pluginSplit($alias);
+        $name = $this->_associationName();
         $newOptions = [$name => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
@@ -140,7 +139,7 @@ class VersionBehavior extends Behavior
         $foreignKey = $this->_extractForeignKey($entity);
         $versionField = $this->_config['versionField'];
 
-        $table = TableRegistry::get($alias);
+        $table = TableRegistry::get($this->_config['versionTable']);
         $preexistent = $table->find()
             ->select(['version_id'])
             ->where([
@@ -216,9 +215,9 @@ class VersionBehavior extends Behavior
      */
     public function findVersions(Query $query, array $options)
     {
-        $table = $this->_config['versionTable'];
+        $name = $this->_associationName();
         return $query
-            ->contain([$table => function ($q) use ($table, $options, $query) {
+            ->contain([$name => function ($q) use ($name, $options, $query) {
                 if (!empty($options['primaryKey'])) {
                     $foreignKey = (array)$this->_config['foreignKey'];
                     $aliasedFK = [];
@@ -229,9 +228,9 @@ class VersionBehavior extends Behavior
                     $q->where($conditions);
                 }
                 if (!empty($options['versionId'])) {
-                    $q->where(["$table.version_id IN" => $options['versionId']]);
+                    $q->where(["$name.version_id IN" => $options['versionId']]);
                 }
-                $q->where(["$table.field IN" => $this->_fields()]);
+                $q->where(["$name.field IN" => $this->_fields()]);
                 return $q;
             }])
             ->formatResults([$this, 'groupVersions'], $query::PREPEND);
@@ -297,5 +296,20 @@ class VersionBehavior extends Behavior
         $pkValue = $entity->extract($primaryKey);
 
         return array_combine($foreignKey, $pkValue);
+    }
+
+    /**
+     * Returns default version association name.
+     *
+     * @param string $table Table name.
+     * @return string
+     */
+    protected function _associationName($table = null)
+    {
+        if ($table === null) {
+            $table = $this->_config['versionTable'];
+        }
+        list(, $name) = pluginSplit($table);
+        return $name;
     }
 }
