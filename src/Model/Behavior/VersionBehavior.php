@@ -56,7 +56,8 @@ class VersionBehavior extends Behavior
         'implementedFinders' => ['versions' => 'findVersions'],
         'versionTable' => 'version',
         'versionField' => 'version_id',
-        'fields' => null
+        'fields' => null,
+        'foreignKey' => 'foreign_key'
     ];
 
     /**
@@ -95,7 +96,7 @@ class VersionBehavior extends Behavior
 
             $this->_table->hasOne($name, [
                 'targetTable' => $target,
-                'foreignKey' => 'foreign_key',
+                'foreignKey' => $this->_config['foreignKey'],
                 'joinType' => 'LEFT',
                 'conditions' => [
                     $name . '.model' => $alias,
@@ -106,7 +107,7 @@ class VersionBehavior extends Behavior
         }
 
         $this->_table->hasMany($table, [
-            'foreignKey' => 'foreign_key',
+            'foreignKey' => $this->_config['foreignKey'],
             'strategy' => 'subquery',
             'conditions' => ["$table.model" => $alias],
             'propertyName' => '__version',
@@ -134,16 +135,14 @@ class VersionBehavior extends Behavior
 
         $model = $this->_table->alias();
         $primaryKey = (array)$this->_table->primaryKey();
-        $primaryKey = current($primaryKey);
-        $foreignKey = $entity->get($primaryKey);
+        $foreignKey = $this->_extractForeignKey($entity);
         $versionField = $this->_config['versionField'];
 
         $preexistent = TableRegistry::get($table)->find()
             ->select(['version_id'])
             ->where([
-                'foreign_key' => $foreignKey,
                 'model' => $model
-            ])
+            ] + $foreignKey)
             ->order(['id desc'])
             ->limit(1)
             ->hydrate(false)
@@ -153,18 +152,17 @@ class VersionBehavior extends Behavior
 
         $created = new Time();
         foreach ($values as $field => $content) {
-            if ($field == $primaryKey || $field == $versionField) {
+            if (in_array($field, $primaryKey) || $field == $versionField) {
                 continue;
             }
 
             $data = [
                 'version_id' => $versionId,
                 'model' => $model,
-                'foreign_key' => $foreignKey,
                 'field' => $field,
                 'content' => $content,
                 'created' => $created,
-            ];
+            ] + $foreignKey;
 
             $event = new Event('Model.Version.beforeSave', $this, $options);
             $userData = EventManager::instance()->dispatch($event);
@@ -274,5 +272,20 @@ class VersionBehavior extends Behavior
         }
 
         return $fields;
+    }
+
+    /**
+     * Returns an array with foreignKey value.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity
+     * @return array
+     */
+    protected function _extractForeignKey($entity)
+    {
+        $foreignKey = (array)$this->_config['foreignKey'];
+        $primaryKey = (array)$this->_table->primaryKey();
+        $pkValue = $entity->extract($primaryKey);
+
+        return array_combine($foreignKey, $pkValue);
     }
 }
