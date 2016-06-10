@@ -37,11 +37,16 @@ trait VersionTrait
         }
 
         $table = TableRegistry::get($this->source());
-        $primaryKey = $table->primaryKey();
+        $primaryKey = (array)$table->primaryKey();
 
-        $conditions = [$primaryKey => $this->id];
-        $entities = $table->find('versions', ['conditions' => $conditions])
-                        ->all();
+        $query = $table->find('versions');
+        $pkValue = $this->extract($primaryKey);
+        $conditions = [];
+        foreach ($pkValue as $key => $value) {
+            $field = current($query->aliasField($key));
+            $conditions[$field] = $value;
+        }
+        $entities = $query->where($conditions)->all();
 
         if (empty($entities)) {
             return [];
