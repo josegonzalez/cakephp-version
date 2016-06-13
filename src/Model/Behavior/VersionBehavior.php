@@ -177,7 +177,7 @@ class VersionBehavior extends Behavior
         }
 
         $entity->set('__version', $new);
-        if (!empty($versionField) && in_array($versionField, $fields)) {
+        if (!empty($versionField) && in_array($versionField, $this->_table->schema()->columns())) {
             $entity->set($this->_config['versionField'], $versionId);
         }
     }
