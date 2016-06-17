@@ -208,7 +208,7 @@ class VersionBehavior extends Behavior
             ]);
         }
 
-        $entity->set('__version', $new);
+        $entity->set($association->property(), $new);
         if (!empty($versionField) && in_array($versionField, $this->_table->schema()->columns())) {
             $entity->set($this->_config['versionField'], $versionId);
         }
@@ -223,7 +223,8 @@ class VersionBehavior extends Behavior
      */
     public function afterSave(Event $event, Entity $entity)
     {
-        $entity->unsetProperty('__version');
+        $property = $this->versionAssociation()->property();
+        $entity->unsetProperty($property);
     }
 
     /**
@@ -275,9 +276,10 @@ class VersionBehavior extends Behavior
      */
     public function groupVersions($results)
     {
-        return $results->map(function ($row) {
+        $property = $this->versionAssociation()->property();
+        return $results->map(function ($row) use ($property) {
             $versionField = $this->_config['versionField'];
-            $versions = (array)$row->get('__version');
+            $versions = (array)$row->get($property);
             $grouped = new Collection($versions);
 
             $result = [];
@@ -292,7 +294,7 @@ class VersionBehavior extends Behavior
 
             $options = ['setter' => false, 'guard' => false];
             $row->set('_versions', $result, $options);
-            unset($row['__version']);
+            unset($row[$property]);
             $row->clean();
             return $row;
         });
