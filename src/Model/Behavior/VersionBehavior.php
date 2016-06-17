@@ -58,7 +58,8 @@ class VersionBehavior extends Behavior
         'versionTable' => 'version',
         'versionField' => 'version_id',
         'fields' => null,
-        'foreignKey' => 'foreign_key'
+        'foreignKey' => 'foreign_key',
+        'referenceName' => null
     ];
 
     /**
@@ -72,8 +73,10 @@ class VersionBehavior extends Behavior
      */
     public function initialize(array $config)
     {
-        $config = $this->config();
-        $this->setupFieldAssociations($config['versionTable']);
+        if ($this->_config['referenceName'] == null) {
+            $this->_config['referenceName'] = $this->_referenceName();
+        }
+        $this->setupFieldAssociations($this->_config['versionTable']);
     }
 
     /**
@@ -88,7 +91,7 @@ class VersionBehavior extends Behavior
      */
     public function setupFieldAssociations($table)
     {
-        $alias = $this->_table->alias();
+        $model = $this->_config['referenceName'];
 
         foreach ($this->_fields() as $field) {
             $name = $this->_associationName($field);
@@ -98,7 +101,7 @@ class VersionBehavior extends Behavior
                 'foreignKey' => $this->_config['foreignKey'],
                 'joinType' => 'LEFT',
                 'conditions' => [
-                    $name . '.model' => $alias,
+                    $name . '.model' => $model,
                     $name . '.field' => $field,
                 ],
                 'propertyName' => $field . '_version'
@@ -111,7 +114,7 @@ class VersionBehavior extends Behavior
             'className' => $table,
             'foreignKey' => $this->_config['foreignKey'],
             'strategy' => 'subquery',
-            'conditions' => ["$name.model" => $alias],
+            'conditions' => ["$name.model" => $model],
             'propertyName' => '__version',
             'dependent' => true
         ]);
@@ -135,7 +138,7 @@ class VersionBehavior extends Behavior
         $fields = $this->_fields();
         $values = $entity->extract($fields);
 
-        $model = $this->_table->alias();
+        $model = $this->_config['referenceName'];
         $primaryKey = (array)$this->_table->primaryKey();
         $foreignKey = $this->_extractForeignKey($entity);
         $versionField = $this->_config['versionField'];
@@ -313,5 +316,23 @@ class VersionBehavior extends Behavior
             $field = Inflector::camelize($field);
         }
         return $alias . $field . 'Version';
+    }
+
+    /**
+     * Returns reference name for identifying this model's records in version table.
+     *
+     * @return string
+     */
+    protected function _referenceName()
+    {
+        $table = $this->_table;
+        $name = namespaceSplit(get_class($table));
+        $name = substr(end($name), 0, -5);
+        if (empty($name)) {
+            $name = $table->table() ?: $table->alias();
+            $name = Inflector::camelize($name);
+        }
+
+        return $name;
     }
 }
