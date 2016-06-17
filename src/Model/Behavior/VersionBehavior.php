@@ -219,7 +219,7 @@ class VersionBehavior extends Behavior
                     $foreignKey = (array)$this->_config['foreignKey'];
                     $aliasedFK = [];
                     foreach ($foreignKey as $field) {
-                        $aliasedFK[] = $query->aliasField($field) . ' IN';
+                        $aliasedFK[] = current($query->aliasField($field)) . ' IN';
                     }
                     $conditions = array_combine($aliasedFK, (array)$options['primaryKey']);
                     $q->where($conditions);
