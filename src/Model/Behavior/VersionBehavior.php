@@ -83,7 +83,7 @@ class VersionBehavior extends Behavior
      * Creates the associations between the bound table and every field passed to
      * this method.
      *
-     * Additionally it creates a `i18n` HasMany association that will be
+     * Additionally it creates a `version` HasMany association that will be
      * used for fetching all versions for each record in the bound table
      *
      * @param string $table the table name to use for storing each field version
@@ -91,33 +91,57 @@ class VersionBehavior extends Behavior
      */
     public function setupFieldAssociations($table)
     {
-        $model = $this->_config['referenceName'];
+        $options = [
+            'table' => $table
+        ];
 
         foreach ($this->_fields() as $field) {
             $name = $this->_associationName($field);
-
-            $this->_table->hasOne($name, [
-                'className' => $table,
-                'foreignKey' => $this->_config['foreignKey'],
-                'joinType' => 'LEFT',
-                'conditions' => [
-                    $name . '.model' => $model,
-                    $name . '.field' => $field,
-                ],
-                'propertyName' => $field . '_version'
-            ]);
+            $this->versionAssociation($field, $options);
         }
 
         $name = $this->_associationName();
+        $this->versionAssociation(null, $options);
+    }
 
-        $this->_table->hasMany($name, [
-            'className' => $table,
-            'foreignKey' => $this->_config['foreignKey'],
-            'strategy' => 'subquery',
-            'conditions' => ["$name.model" => $model],
-            'propertyName' => '__version',
-            'dependent' => true
-        ]);
+    /**
+     * Returns association object for all versions or single field version.
+     *
+     * @param string|null $field Field name for per-field association.
+     * @param array $options Association options.
+     * @return \Cake\ORM\Association
+     */
+    public function versionAssociation($field = null, $options = [])
+    {
+        $name = $this->_associationName($field);
+
+        if (!$this->_table->associations()->has($name)) {
+            $model = $this->_config['referenceName'];
+
+            if ($field) {
+                $this->_table->hasOne($name, $options + [
+                    'className' => $this->_config['versionTable'],
+                    'foreignKey' => $this->_config['foreignKey'],
+                    'joinType' => 'LEFT',
+                    'conditions' => [
+                        $name . '.model' => $model,
+                        $name . '.field' => $field,
+                    ],
+                    'propertyName' => $field . '_version'
+                ]);
+            } else {
+                $this->_table->hasMany($name, $options + [
+                    'className' => $this->_config['versionTable'],
+                    'foreignKey' => $this->_config['foreignKey'],
+                    'strategy' => 'subquery',
+                    'conditions' => ["$name.model" => $model],
+                    'propertyName' => '__version',
+                    'dependent' => true
+                ]);
+            }
+        }
+
+        return $this->_table->association($name);
     }
 
     /**
@@ -131,7 +155,8 @@ class VersionBehavior extends Behavior
      */
     public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
     {
-        $name = $this->_associationName();
+        $association = $this->versionAssociation();
+        $name = $association->name();
         $newOptions = [$name => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
@@ -219,7 +244,8 @@ class VersionBehavior extends Behavior
      */
     public function findVersions(Query $query, array $options)
     {
-        $name = $this->_associationName();
+        $association = $this->versionAssociation();
+        $name = $association->name();
         return $query
             ->contain([$name => function ($q) use ($name, $options, $query) {
                 if (!empty($options['primaryKey'])) {
