@@ -24,6 +24,7 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 use DateTime;
 
 /**
@@ -90,7 +91,7 @@ class VersionBehavior extends Behavior
         $alias = $this->_table->alias();
 
         foreach ($this->_fields() as $field) {
-            $name = $alias . '_' . $field . '_version';
+            $name = $this->_associationName($field);
 
             $this->_table->hasOne($name, [
                 'className' => $table,
@@ -104,7 +105,7 @@ class VersionBehavior extends Behavior
             ]);
         }
 
-        $name = $this->_associationName($table);
+        $name = $this->_associationName();
 
         $this->_table->hasMany($name, [
             'className' => $table,
@@ -302,15 +303,15 @@ class VersionBehavior extends Behavior
     /**
      * Returns default version association name.
      *
-     * @param string $table Table name.
+     * @param string $field Field name.
      * @return string
      */
-    protected function _associationName($table = null)
+    protected function _associationName($field = null)
     {
-        if ($table === null) {
-            $table = $this->_config['versionTable'];
+        $alias = Inflector::singularize($this->_table->alias());
+        if ($field) {
+            $field = Inflector::camelize($field);
         }
-        list(, $name) = pluginSplit($table);
-        return $name;
+        return $alias . $field . 'Version';
     }
 }
