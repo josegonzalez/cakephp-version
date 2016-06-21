@@ -168,19 +168,22 @@ class VersionBehavior extends Behavior
         $foreignKey = $this->_extractForeignKey($entity);
         $versionField = $this->_config['versionField'];
 
-        $table = TableRegistry::get($this->_config['versionTable']);
-        $preexistent = $table->find()
-            ->select(['version_id'])
-            ->where([
-                'model' => $model
-            ] + $foreignKey)
-            ->order(['id desc'])
-            ->limit(1)
-            ->hydrate(false)
-            ->toArray();
+        if (isset($options['versionId'])) {
+            $versionId = $options['versionId'];
+        } else {
+            $table = TableRegistry::get($this->_config['versionTable']);
+            $preexistent = $table->find()
+                ->select(['version_id'])
+                ->where([
+                    'model' => $model
+                ] + $foreignKey)
+                ->order(['id desc'])
+                ->limit(1)
+                ->hydrate(false)
+                ->toArray();
 
-        $versionId = Hash::get($preexistent, '0.version_id', 0) + 1;
-
+            $versionId = Hash::get($preexistent, '0.version_id', 0) + 1;
+        }
         $created = new DateTime();
         foreach ($values as $field => $content) {
             if (in_array($field, $primaryKey) || $field == $versionField) {
