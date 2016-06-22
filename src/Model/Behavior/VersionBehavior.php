@@ -185,6 +185,7 @@ class VersionBehavior extends Behavior
             $versionId = Hash::get($preexistent, '0.version_id', 0) + 1;
         }
         $created = new DateTime();
+        $new = [];
         foreach ($values as $field => $content) {
             if (in_array($field, $primaryKey) || $field == $versionField) {
                 continue;
