@@ -287,7 +287,8 @@ class VersionBehavior extends Behavior
 
             $result = [];
             foreach ($grouped->combine('field', 'content', 'version_id') as $versionId => $keys) {
-                $version = $this->_table->newEntity($keys + [$versionField => $versionId], [
+                $entityClass = $this->_table->entityClass();
+                $version = new $entityClass($keys + [$versionField => $versionId], [
                     'markNew' => false,
                     'useSetters' => false,
                     'markClean' => true
