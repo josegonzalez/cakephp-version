@@ -21,6 +21,8 @@ class VersionBehaviorTest extends TestCase
     public $fixtures = [
         'plugin.Josegonzalez\Version.versions',
         'plugin.Josegonzalez\Version.articles',
+        'plugin.Josegonzalez\Version.articles_tags_versions',
+        'plugin.Josegonzalez\Version.articles_tags',
     ];
 
     public function tearDown()
@@ -206,5 +208,39 @@ class VersionBehaviorTest extends TestCase
                                 ->hydrate(false)
                                 ->toArray();
         $this->assertNull($results[9]['custom_field']);
+    }
+
+    public function testFindWithCompositeKeys()
+    {
+        $table = TableRegistry::get('ArticlesTags', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
+        ]);
+        $table->addBehavior('Josegonzalez/Version.Version', [
+            'fields' => 'sort_order',
+            'versionTable' => 'articles_tags_versions',
+            'foreignKey' => ['article_id', 'tag_id']
+        ]);
+
+        $entity = $table->find()->first();
+        $this->assertEquals(['sort_order' => 1, 'version_id' => 1], $entity->version(1)->toArray());
+        $this->assertEquals(['sort_order' => 2, 'version_id' => 2], $entity->version(2)->toArray());
+    }
+
+    public function testSaveWithCompositeKeys()
+    {
+        $table = TableRegistry::get('ArticlesTags', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
+        ]);
+        $table->addBehavior('Josegonzalez/Version.Version', [
+            'fields' => 'sort_order',
+            'versionTable' => 'articles_tags_versions',
+            'foreignKey' => ['article_id', 'tag_id']
+        ]);
+
+        $entity = $table->find()->first();
+        $entity->sort_order = 3;
+        $table->save($entity);
+        $this->assertEquals(3, $entity->version_id);
+        $this->assertEquals(['sort_order' => 3, 'version_id' => 3], $entity->version(3)->toArray());
     }
 }
