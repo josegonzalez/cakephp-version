@@ -113,6 +113,7 @@ class VersionListener extends EventListener
 
             unset($belongsTo[$i]);
         }
+
         return $belongsTo;
     }
 

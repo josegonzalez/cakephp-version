@@ -251,6 +251,7 @@ class VersionBehavior extends Behavior
     {
         $association = $this->versionAssociation();
         $name = $association->name();
+
         return $query
             ->contain([$name => function ($q) use ($name, $options, $query) {
                 if (!empty($options['primaryKey'])) {
@@ -266,6 +267,7 @@ class VersionBehavior extends Behavior
                     $q->where(["$name.version_id IN" => $options['versionId']]);
                 }
                 $q->where(["$name.field IN" => $this->_fields()]);
+
                 return $q;
             }])
             ->formatResults([$this, 'groupVersions'], $query::PREPEND);
@@ -281,6 +283,7 @@ class VersionBehavior extends Behavior
     public function groupVersions($results)
     {
         $property = $this->versionAssociation()->property();
+
         return $results->map(function ($row) use ($property) {
             $versionField = $this->_config['versionField'];
             $versions = (array)$row->get($property);
@@ -301,6 +304,7 @@ class VersionBehavior extends Behavior
             $row->set('_versions', $result, $options);
             unset($row[$property]);
             $row->clean();
+
             return $row;
         });
     }
@@ -348,6 +352,7 @@ class VersionBehavior extends Behavior
         if ($field) {
             $field = Inflector::camelize($field);
         }
+
         return $alias . $field . 'Version';
     }
 

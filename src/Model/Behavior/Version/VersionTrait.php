@@ -54,6 +54,7 @@ trait VersionTrait
 
         $entity = $entities->first();
         $this->set('_versions', $entity->get('_versions'));
+
         return $this->get('_versions');
     }
 }

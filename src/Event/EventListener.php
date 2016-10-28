@@ -49,6 +49,7 @@ abstract class EventListener implements EventListenerInterface
     public function isType($type)
     {
         $template = sprintf('Bake/%s.ctp', $type);
+
         return strpos($this->event->data[0], $template) !== false;
     }
 
