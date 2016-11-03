@@ -198,7 +198,8 @@ bin/cake bake migration add_version_id_to_posts version_id:integer
 
 ### Configuration
 
-There are two behavior configurations that may be used:
+There are three behavior configurations that may be used:
 
 - `versionTable`: (Default: `version`) The name of the table to be used to store versioned data. It may be useful to use a different table when versioning multiple types of entities.
 - `versionField`: (Default: `version_id`) The name of the field in the versioned table that will store the current version. If missing, the plugin will continue to work as normal.
+- `referenceName`: (Default: db table name) Discriminator used to identify records in the version table.

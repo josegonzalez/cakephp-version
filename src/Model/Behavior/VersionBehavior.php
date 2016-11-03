@@ -18,13 +18,14 @@ use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
-use Cake\I18n\Time;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
+use DateTime;
 
 /**
  * This behavior provides a way to version dynamic data by keeping versions
@@ -57,7 +58,8 @@ class VersionBehavior extends Behavior
         'versionTable' => 'version',
         'versionField' => 'version_id',
         'fields' => null,
-        'foreignKey' => 'foreign_key'
+        'foreignKey' => 'foreign_key',
+        'referenceName' => null
     ];
 
     /**
@@ -71,15 +73,17 @@ class VersionBehavior extends Behavior
      */
     public function initialize(array $config)
     {
-        $config = $this->config();
-        $this->setupFieldAssociations($config['versionTable']);
+        if ($this->_config['referenceName'] == null) {
+            $this->_config['referenceName'] = $this->_referenceName();
+        }
+        $this->setupFieldAssociations($this->_config['versionTable']);
     }
 
     /**
      * Creates the associations between the bound table and every field passed to
      * this method.
      *
-     * Additionally it creates a `i18n` HasMany association that will be
+     * Additionally it creates a `version` HasMany association that will be
      * used for fetching all versions for each record in the bound table
      *
      * @param string $table the table name to use for storing each field version
@@ -87,32 +91,57 @@ class VersionBehavior extends Behavior
      */
     public function setupFieldAssociations($table)
     {
-        $alias = $this->_table->alias();
+        $options = [
+            'table' => $table
+        ];
 
         foreach ($this->_fields() as $field) {
-            $name = $this->_table->alias() . '_' . $field . '_version';
-            $target = TableRegistry::get($name);
-            $target->table($table);
-
-            $this->_table->hasOne($name, [
-                'targetTable' => $target,
-                'foreignKey' => $this->_config['foreignKey'],
-                'joinType' => 'LEFT',
-                'conditions' => [
-                    $name . '.model' => $alias,
-                    $name . '.field' => $field,
-                ],
-                'propertyName' => $field . '_version'
-            ]);
+            $name = $this->_associationName($field);
+            $this->versionAssociation($field, $options);
         }
 
-        $this->_table->hasMany($table, [
-            'foreignKey' => $this->_config['foreignKey'],
-            'strategy' => 'subquery',
-            'conditions' => ["$table.model" => $alias],
-            'propertyName' => '__version',
-            'dependent' => true
-        ]);
+        $name = $this->_associationName();
+        $this->versionAssociation(null, $options);
+    }
+
+    /**
+     * Returns association object for all versions or single field version.
+     *
+     * @param string|null $field Field name for per-field association.
+     * @param array $options Association options.
+     * @return \Cake\ORM\Association
+     */
+    public function versionAssociation($field = null, $options = [])
+    {
+        $name = $this->_associationName($field);
+
+        if (!$this->_table->associations()->has($name)) {
+            $model = $this->_config['referenceName'];
+
+            if ($field) {
+                $this->_table->hasOne($name, $options + [
+                    'className' => $this->_config['versionTable'],
+                    'foreignKey' => $this->_config['foreignKey'],
+                    'joinType' => 'LEFT',
+                    'conditions' => [
+                        $name . '.model' => $model,
+                        $name . '.field' => $field,
+                    ],
+                    'propertyName' => $field . '_version'
+                ]);
+            } else {
+                $this->_table->hasMany($name, $options + [
+                    'className' => $this->_config['versionTable'],
+                    'foreignKey' => $this->_config['foreignKey'],
+                    'strategy' => 'subquery',
+                    'conditions' => ["$name.model" => $model],
+                    'propertyName' => '__version',
+                    'dependent' => true
+                ]);
+            }
+        }
+
+        return $this->_table->association($name);
     }
 
     /**
@@ -126,31 +155,37 @@ class VersionBehavior extends Behavior
      */
     public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
     {
-        $table = $this->_config['versionTable'];
-        $newOptions = [$table => ['validate' => false]];
+        $association = $this->versionAssociation();
+        $name = $association->name();
+        $newOptions = [$name => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
         $fields = $this->_fields();
         $values = $entity->extract($fields);
 
-        $model = $this->_table->alias();
+        $model = $this->_config['referenceName'];
         $primaryKey = (array)$this->_table->primaryKey();
         $foreignKey = $this->_extractForeignKey($entity);
         $versionField = $this->_config['versionField'];
 
-        $preexistent = TableRegistry::get($table)->find()
-            ->select(['version_id'])
-            ->where([
-                'model' => $model
-            ] + $foreignKey)
-            ->order(['id desc'])
-            ->limit(1)
-            ->hydrate(false)
-            ->toArray();
+        if (isset($options['versionId'])) {
+            $versionId = $options['versionId'];
+        } else {
+            $table = TableRegistry::get($this->_config['versionTable']);
+            $preexistent = $table->find()
+                ->select(['version_id'])
+                ->where([
+                    'model' => $model
+                ] + $foreignKey)
+                ->order(['id desc'])
+                ->limit(1)
+                ->hydrate(false)
+                ->toArray();
 
-        $versionId = Hash::get($preexistent, '0.version_id', 0) + 1;
-
-        $created = new Time();
+            $versionId = Hash::get($preexistent, '0.version_id', 0) + 1;
+        }
+        $created = new DateTime();
+        $new = [];
         foreach ($values as $field => $content) {
             if (in_array($field, $primaryKey) || $field == $versionField) {
                 continue;
@@ -170,13 +205,14 @@ class VersionBehavior extends Behavior
                 $data = array_merge($data, $userData->result);
             }
 
-            $new[$field] = new Entity($data, [
+            $entityClass = $table->entityClass();
+            $new[$field] = new $entityClass($data, [
                 'useSetters' => false,
                 'markNew' => true
             ]);
         }
 
-        $entity->set('__version', $new);
+        $entity->set($association->property(), $new);
         if (!empty($versionField) && in_array($versionField, $this->_table->schema()->columns())) {
             $entity->set($this->_config['versionField'], $versionId);
         }
@@ -191,7 +227,8 @@ class VersionBehavior extends Behavior
      */
     public function afterSave(Event $event, Entity $entity)
     {
-        $entity->unsetProperty('__version');
+        $property = $this->versionAssociation()->property();
+        $entity->unsetProperty($property);
     }
 
     /**
@@ -212,22 +249,25 @@ class VersionBehavior extends Behavior
      */
     public function findVersions(Query $query, array $options)
     {
-        $table = $this->_config['versionTable'];
+        $association = $this->versionAssociation();
+        $name = $association->name();
+
         return $query
-            ->contain([$table => function ($q) use ($table, $options, $query) {
+            ->contain([$name => function ($q) use ($name, $options, $query) {
                 if (!empty($options['primaryKey'])) {
                     $foreignKey = (array)$this->_config['foreignKey'];
                     $aliasedFK = [];
                     foreach ($foreignKey as $field) {
-                        $aliasedFK[] = current($query->aliasField($field)) . ' IN';
+                        $aliasedFK[] = "$name.$field";
                     }
                     $conditions = array_combine($aliasedFK, (array)$options['primaryKey']);
                     $q->where($conditions);
                 }
                 if (!empty($options['versionId'])) {
-                    $q->where(["$table.version_id IN" => $options['versionId']]);
+                    $q->where(["$name.version_id IN" => $options['versionId']]);
                 }
-                $q->where(["$table.field IN" => $this->_fields()]);
+                $q->where(["$name.field IN" => $this->_fields()]);
+
                 return $q;
             }])
             ->formatResults([$this, 'groupVersions'], $query::PREPEND);
@@ -242,13 +282,17 @@ class VersionBehavior extends Behavior
      */
     public function groupVersions($results)
     {
-        return $results->map(function ($row) {
-            $versions = (array)$row->get('__version');
+        $property = $this->versionAssociation()->property();
+
+        return $results->map(function ($row) use ($property) {
+            $versionField = $this->_config['versionField'];
+            $versions = (array)$row->get($property);
             $grouped = new Collection($versions);
 
             $result = [];
             foreach ($grouped->combine('field', 'content', 'version_id') as $versionId => $keys) {
-                $version = $this->_table->newEntity($keys + ['version_id' => $versionId], [
+                $entityClass = $this->_table->entityClass();
+                $version = new $entityClass($keys + [$versionField => $versionId], [
                     'markNew' => false,
                     'useSetters' => false,
                     'markClean' => true
@@ -258,8 +302,9 @@ class VersionBehavior extends Behavior
 
             $options = ['setter' => false, 'guard' => false];
             $row->set('_versions', $result, $options);
-            unset($row['__version']);
+            unset($row[$property]);
             $row->clean();
+
             return $row;
         });
     }
@@ -293,5 +338,39 @@ class VersionBehavior extends Behavior
         $pkValue = $entity->extract($primaryKey);
 
         return array_combine($foreignKey, $pkValue);
+    }
+
+    /**
+     * Returns default version association name.
+     *
+     * @param string $field Field name.
+     * @return string
+     */
+    protected function _associationName($field = null)
+    {
+        $alias = Inflector::singularize($this->_table->alias());
+        if ($field) {
+            $field = Inflector::camelize($field);
+        }
+
+        return $alias . $field . 'Version';
+    }
+
+    /**
+     * Returns reference name for identifying this model's records in version table.
+     *
+     * @return string
+     */
+    protected function _referenceName()
+    {
+        $table = $this->_table;
+        $name = namespaceSplit(get_class($table));
+        $name = substr(end($name), 0, -5);
+        if (empty($name)) {
+            $name = $table->table() ?: $table->alias();
+            $name = Inflector::camelize($name);
+        }
+
+        return $name;
     }
 }
