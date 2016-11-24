@@ -46,13 +46,38 @@ CREATE TABLE `version` (
     `model` varchar(255) NOT NULL,
     `foreign_key` int(10) NOT NULL,
     `field` varchar(255) NOT NULL,
-    `content` text,
+    `content` text NULL,
     `created` datetime NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 
+> Note that the `content` field must be nullable if you want to be able to version any nullable fields in your application.
+
 > You may optionally add a `version_id` field of type `integer` to the table which is being versioned. This will store the latest version number of a given page.
+
+If you wish to create the table using `cakephp/migrations` then you will need to use a migration that looks something like this:
+
+```php
+<?php
+
+use Phinx\Migration\AbstractMigration;
+
+class CreateVersions extends AbstractMigration
+{
+    public function change()
+    {
+        $this->table('version')
+             ->addColumn('version_id', 'integer', ['null' => true])
+             ->addColumn('model', 'string')
+             ->addColumn('foreign_key', 'integer')
+             ->addColumn('field', 'string')
+             ->addColumn('content', 'text', ['null' => true])
+             ->addColumn('created', 'datetime')
+             ->create();
+    }
+}
+```
 
 Add the following line to your entities:
 
