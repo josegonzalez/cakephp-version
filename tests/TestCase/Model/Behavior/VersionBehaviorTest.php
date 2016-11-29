@@ -131,6 +131,29 @@ class VersionBehaviorTest extends TestCase
         $this->assertEquals('title', $results[0]['field']);
     }
 
+    public function testSaveDirtyFields()
+    {
+        $table = TableRegistry::get('Articles', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
+        ]);
+        $table->addBehavior('Josegonzalez/Version.Version', ['onlyDirty' => true]);
+        $article = $table->find('all')->first();
+
+        $article->title = 'Titulo';
+        $article->body = 'Hello world!';
+        $table->save($article);
+
+        $versionTable = TableRegistry::get('Version');
+        $results = $versionTable->find('all')
+                                ->where(['foreign_key' => $article->id, 'version_id' => 3])
+                                ->hydrate(false)
+                                ->toArray();
+
+        $this->assertCount(2, $results);
+        $this->assertEquals('title', $results[0]['field']);
+        $this->assertEquals('body', $results[1]['field']);
+    }
+
     public function testFindVersionLimitFields()
     {
         $table = TableRegistry::get('Articles', [

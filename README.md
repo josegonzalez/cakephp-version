@@ -228,3 +228,4 @@ There are three behavior configurations that may be used:
 - `versionTable`: (Default: `version`) The name of the table to be used to store versioned data. It may be useful to use a different table when versioning multiple types of entities.
 - `versionField`: (Default: `version_id`) The name of the field in the versioned table that will store the current version. If missing, the plugin will continue to work as normal.
 - `referenceName`: (Default: db table name) Discriminator used to identify records in the version table.
+- `onlyDirty`: (Default: false) Set to true to version only dirty properties.

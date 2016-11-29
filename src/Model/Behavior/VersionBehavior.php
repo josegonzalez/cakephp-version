@@ -59,7 +59,8 @@ class VersionBehavior extends Behavior
         'versionField' => 'version_id',
         'fields' => null,
         'foreignKey' => 'foreign_key',
-        'referenceName' => null
+        'referenceName' => null,
+        'onlyDirty' => false
     ];
 
     /**
@@ -161,7 +162,7 @@ class VersionBehavior extends Behavior
         $options['associated'] = $newOptions + $options['associated'];
 
         $fields = $this->_fields();
-        $values = $entity->extract($fields);
+        $values = $entity->extract($fields, $this->_config['onlyDirty']);
 
         $model = $this->_config['referenceName'];
         $primaryKey = (array)$this->_table->primaryKey();
