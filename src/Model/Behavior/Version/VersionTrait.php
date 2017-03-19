@@ -48,7 +48,7 @@ trait VersionTrait
         $entities = $query->where($conditions)->all();
 
         if (empty($entities)) {
-            return new Collection();
+            return new Collection([]);
         }
 
         $entity = $entities->first();
