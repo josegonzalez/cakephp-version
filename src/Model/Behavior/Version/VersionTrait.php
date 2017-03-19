@@ -1,9 +1,8 @@
 <?php
 namespace Josegonzalez\Version\Model\Behavior\Version;
 
-use Cake\ORM\Entity;
+use Cake\Collection\Collection;
 use Cake\ORM\TableRegistry;
-use LogicException;
 
 trait VersionTrait
 {
@@ -12,7 +11,7 @@ trait VersionTrait
      *
      * @param int $versionId The version number to retrieve
      * @param bool $reset If true, will re-retrieve the related version collection
-     * @return \Cake\ORM\Entity
+     * @return \Cake\ORM\Entity|null
      */
     public function version($versionId, $reset = false)
     {
@@ -28,7 +27,7 @@ trait VersionTrait
      * Retrieves the related versions for the current entity
      *
      * @param bool $reset If true, will re-retrieve the related version collection
-     * @return \Cake\Collection\Collection
+     * @return \Cake\Collection\CollectionInterface
      */
     public function versions($reset = false)
     {
@@ -49,7 +48,7 @@ trait VersionTrait
         $entities = $query->where($conditions)->all();
 
         if (empty($entities)) {
-            return [];
+            return new Collection();
         }
 
         $entity = $entities->first();

@@ -279,7 +279,7 @@ class VersionBehavior extends Behavior
      * into each entity under the `_versions` key
      *
      * @param \Cake\Datasource\ResultSetInterface $results Results to modify.
-     * @return \Cake\Collection\Collection
+     * @return \Cake\Collection\CollectionInterface
      */
     public function groupVersions($results)
     {
