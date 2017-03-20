@@ -17,7 +17,7 @@
     },
     "require-dev": {
         "cakephp/cakephp": "~3.0",
-        "phpunit/phpunit": "4.1.*",
+        "phpunit/phpunit": "^4.1 || ^5.0",
         "cakephp/cakephp-codesniffer": "dev-master",
         "satooshi/php-coveralls": "dev-master"
     },
