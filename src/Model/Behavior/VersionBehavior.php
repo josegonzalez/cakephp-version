@@ -16,12 +16,11 @@ namespace Josegonzalez\Version\Model\Behavior;
 
 use ArrayObject;
 use Cake\Collection\Collection;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Behavior;
-use Cake\ORM\Entity;
 use Cake\ORM\Query;
-use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
@@ -57,6 +56,7 @@ class VersionBehavior extends Behavior
         'implementedFinders' => ['versions' => 'findVersions'],
         'versionTable' => 'version',
         'versionField' => 'version_id',
+        'additionalVersionFields' => ['created'],
         'fields' => null,
         'foreignKey' => 'foreign_key',
         'referenceName' => null,
@@ -97,11 +97,9 @@ class VersionBehavior extends Behavior
         ];
 
         foreach ($this->_fields() as $field) {
-            $name = $this->_associationName($field);
             $this->versionAssociation($field, $options);
         }
 
-        $name = $this->_associationName();
         $this->versionAssociation(null, $options);
     }
 
@@ -150,11 +148,11 @@ class VersionBehavior extends Behavior
      * in the database too.
      *
      * @param \Cake\Event\Event $event The beforeSave event that was fired
-     * @param \Cake\ORM\Entity $entity The entity that is going to be saved
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @param \ArrayObject $options the options passed to the save method
      * @return void
      */
-    public function beforeSave(Event $event, Entity $entity, ArrayObject $options)
+    public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
         $association = $this->versionAssociation();
         $name = $association->name();
@@ -223,10 +221,10 @@ class VersionBehavior extends Behavior
      * Unsets the temporary `__version` property after the entity has been saved
      *
      * @param \Cake\Event\Event $event The beforeSave event that was fired
-     * @param \Cake\ORM\Entity $entity The entity that is going to be saved
+     * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */
-    public function afterSave(Event $event, Entity $entity)
+    public function afterSave(Event $event, EntityInterface $entity)
     {
         $property = $this->versionAssociation()->property();
         $entity->unsetProperty($property);
@@ -254,7 +252,7 @@ class VersionBehavior extends Behavior
         $name = $association->name();
 
         return $query
-            ->contain([$name => function ($q) use ($name, $options, $query) {
+            ->contain([$name => function (Query $q) use ($name, $options, $query) {
                 if (!empty($options['primaryKey'])) {
                     $foreignKey = (array)$this->_config['foreignKey'];
                     $aliasedFK = [];
@@ -285,7 +283,7 @@ class VersionBehavior extends Behavior
     {
         $property = $this->versionAssociation()->property();
 
-        return $results->map(function ($row) use ($property) {
+        return $results->map(function (EntityInterface $row) use ($property) {
             $versionField = $this->_config['versionField'];
             $versions = (array)$row->get($property);
             $grouped = new Collection($versions);
@@ -293,7 +291,17 @@ class VersionBehavior extends Behavior
             $result = [];
             foreach ($grouped->combine('field', 'content', 'version_id') as $versionId => $keys) {
                 $entityClass = $this->_table->entityClass();
-                $version = new $entityClass($keys + [$versionField => $versionId], [
+                $versionData = [
+                    $versionField => $versionId
+                ];
+                foreach ($this->_config['additionalVersionFields'] as $mappedField => $field) {
+                    if (!is_string($mappedField)) {
+                        $mappedField = 'version_' . $field;
+                    }
+                    $versionData[$mappedField] = $row->get($field);
+                }
+
+                $version = new $entityClass($keys + $versionData, [
                     'markNew' => false,
                     'useSetters' => false,
                     'markClean' => true

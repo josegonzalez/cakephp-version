@@ -18,6 +18,9 @@ class TestEntity extends Entity
 
 class VersionBehaviorTest extends TestCase
 {
+    /**
+     * @var array
+     */
     public $fixtures = [
         'plugin.Josegonzalez\Version.versions',
         'plugin.Josegonzalez\Version.articles',
@@ -25,12 +28,18 @@ class VersionBehaviorTest extends TestCase
         'plugin.Josegonzalez\Version.articles_tags',
     ];
 
+    /**
+     * @return void
+     */
     public function tearDown()
     {
         parent::tearDown();
         TableRegistry::clear();
     }
 
+    /**
+     * @return void
+     */
     public function testSaveNew()
     {
         $table = TableRegistry::get('Articles', [
@@ -42,9 +51,9 @@ class VersionBehaviorTest extends TestCase
 
         $versionTable = TableRegistry::get('Version');
         $results = $versionTable->find('all')
-                                ->where(['foreign_key' => $article->id])
-                                ->hydrate(false)
-                                ->toArray();
+            ->where(['foreign_key' => $article->id])
+            ->hydrate(false)
+            ->toArray();
         $this->assertCount(8, $results);
 
         $article->title = 'Titulo';
@@ -52,14 +61,17 @@ class VersionBehaviorTest extends TestCase
 
         $versionTable = TableRegistry::get('Version');
         $results = $versionTable->find('all')
-                                ->where(['foreign_key' => $article->id])
-                                ->hydrate(false)
-                                ->toArray();
+            ->where(['foreign_key' => $article->id])
+            ->hydrate(false)
+            ->toArray();
 
         $this->assertEquals(3, $article->version_id);
         $this->assertCount(12, $results);
     }
 
+    /**
+     * @return void
+     */
     public function testFindVersion()
     {
         $table = TableRegistry::get('Articles', [
@@ -72,6 +84,32 @@ class VersionBehaviorTest extends TestCase
         $this->assertEquals('First Article', $version->get('title'));
     }
 
+    /**
+     * @return void
+     */
+    public function testFindVersionX()
+    {
+        $table = TableRegistry::get('Articles', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
+        ]);
+        $config = [
+            'additionalVersionFields' => [
+                'version_foo' => 'foooo',
+                'baaar',
+            ],
+        ];
+        $table->addBehavior('Josegonzalez/Version.Version', $config);
+        $article = $table->find('all')->first();
+        $version = $article->version(1);
+
+        $version = $version->toArray();
+        $this->assertArrayHasKey('version_foo', $version);
+        $this->assertArrayHasKey('version_baaar', $version);
+    }
+
+    /**
+     * @return void
+     */
     public function testFindVersions()
     {
         $table = TableRegistry::get('Articles', [
@@ -109,6 +147,9 @@ class VersionBehaviorTest extends TestCase
         $this->assertEquals('Titulo', $versions[4]->title);
     }
 
+    /**
+     * @return void
+     */
     public function testSaveLimitFields()
     {
         $table = TableRegistry::get('Articles', [
@@ -123,14 +164,17 @@ class VersionBehaviorTest extends TestCase
 
         $versionTable = TableRegistry::get('Version');
         $results = $versionTable->find('all')
-                                ->where(['foreign_key' => $article->id, 'version_id' => 3])
-                                ->hydrate(false)
-                                ->toArray();
+            ->where(['foreign_key' => $article->id, 'version_id' => 3])
+            ->hydrate(false)
+            ->toArray();
 
         $this->assertCount(1, $results);
         $this->assertEquals('title', $results[0]['field']);
     }
 
+    /**
+     * @return void
+     */
     public function testSaveDirtyFields()
     {
         $table = TableRegistry::get('Articles', [
@@ -145,15 +189,18 @@ class VersionBehaviorTest extends TestCase
 
         $versionTable = TableRegistry::get('Version');
         $results = $versionTable->find('all')
-                                ->where(['foreign_key' => $article->id, 'version_id' => 3])
-                                ->hydrate(false)
-                                ->toArray();
+            ->where(['foreign_key' => $article->id, 'version_id' => 3])
+            ->hydrate(false)
+            ->toArray();
 
         $this->assertCount(2, $results);
         $this->assertEquals('title', $results[0]['field']);
         $this->assertEquals('body', $results[1]['field']);
     }
 
+    /**
+     * @return void
+     */
     public function testFindVersionLimitFields()
     {
         $table = TableRegistry::get('Articles', [
@@ -167,6 +214,9 @@ class VersionBehaviorTest extends TestCase
         $this->assertArrayNotHasKey('body', $version);
     }
 
+    /**
+     * @return void
+     */
     public function testSaveWithValidMetaData()
     {
         $table = TableRegistry::get('Articles', [
@@ -185,21 +235,24 @@ class VersionBehaviorTest extends TestCase
         $versionTable = TableRegistry::get('Version');
 
         $results = $versionTable->find('all')
-                                ->where(['foreign_key' => $article->id])
-                                ->hydrate(false)
-                                ->toArray();
+            ->where(['foreign_key' => $article->id])
+            ->hydrate(false)
+            ->toArray();
         $this->assertEquals('foo', $results[4]['custom_field']);
 
         $article->title = 'Titulo';
         $table->save($article);
 
         $results = $versionTable->find('all')
-                                ->where(['foreign_key' => $article->id])
-                                ->hydrate(false)
-                                ->toArray();
+            ->where(['foreign_key' => $article->id])
+            ->hydrate(false)
+            ->toArray();
         $this->assertEquals('bar', $results[9]['custom_field']);
     }
 
+    /**
+     * @return void
+     */
     public function testSaveWithInvalidMetaData()
     {
         $table = TableRegistry::get('Articles', [
@@ -233,6 +286,9 @@ class VersionBehaviorTest extends TestCase
         $this->assertNull($results[9]['custom_field']);
     }
 
+    /**
+     * @return void
+     */
     public function testFindWithCompositeKeys()
     {
         $table = TableRegistry::get('ArticlesTags', [
@@ -245,10 +301,13 @@ class VersionBehaviorTest extends TestCase
         ]);
 
         $entity = $table->find()->first();
-        $this->assertEquals(['sort_order' => 1, 'version_id' => 1], $entity->version(1)->toArray());
-        $this->assertEquals(['sort_order' => 2, 'version_id' => 2], $entity->version(2)->toArray());
+        $this->assertEquals(['sort_order' => 1, 'version_id' => 1, 'version_created' => null], $entity->version(1)->toArray());
+        $this->assertEquals(['sort_order' => 2, 'version_id' => 2, 'version_created' => null], $entity->version(2)->toArray());
     }
 
+    /**
+     * @return void
+     */
     public function testSaveWithCompositeKeys()
     {
         $table = TableRegistry::get('ArticlesTags', [
@@ -264,6 +323,6 @@ class VersionBehaviorTest extends TestCase
         $entity->sort_order = 3;
         $table->save($entity);
         $this->assertEquals(3, $entity->version_id);
-        $this->assertEquals(['sort_order' => 3, 'version_id' => 3], $entity->version(3)->toArray());
+        $this->assertEquals(['sort_order' => 3, 'version_id' => 3, 'version_created' => null], $entity->version(3)->toArray());
     }
 }
