@@ -23,6 +23,7 @@ class VersionBehaviorTest extends TestCase
      */
     public $fixtures = [
         'plugin.Josegonzalez\Version.versions',
+        'plugin.Josegonzalez\Version.versions_with_user',
         'plugin.Josegonzalez\Version.articles',
         'plugin.Josegonzalez\Version.articles_tags_versions',
         'plugin.Josegonzalez\Version.articles_tags',
@@ -324,5 +325,27 @@ class VersionBehaviorTest extends TestCase
         $table->save($entity);
         $this->assertEquals(3, $entity->version_id);
         $this->assertEquals(['sort_order' => 3, 'version_id' => 3, 'version_created' => null], $entity->version(3)->toArray());
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetAdditionalMetaData()
+    {
+        $table = TableRegistry::get('Articles', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
+        ]);
+        $table->addBehavior('Josegonzalez/Version.Version', [
+            'versionTable' => 'versions_with_user',
+            'additionalVersionFields' => ['created', 'user_id'],
+        ]);
+        $article = $table->find('all')->first();
+
+        $versionTable = TableRegistry::get('Version', ['table' => 'versions_with_user']);
+
+        $results = $table->find('versions')->toArray();
+
+        $this->assertSame(1, $results[0]['_versions'][1]['version_user_id']);
+        $this->assertSame(2, $results[0]['_versions'][2]['version_user_id']);
     }
 }
