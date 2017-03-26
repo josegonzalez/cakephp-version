@@ -174,7 +174,7 @@ This can provide useful functionality, but ensure that if your event listener re
 
 #### Storing user_id as Meta Data
 To store the `user_id` as additional meta data is easiest in combination with [Muffin/Footprint](https://github.com/UseMuffin/Footprint).
-The above `insertAdditionalData()` methid could then look like this:
+The above `insertAdditionalData()` method could then look like this:
 
 ```php
     /**
