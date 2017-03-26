@@ -345,7 +345,7 @@ class VersionBehaviorTest extends TestCase
 
         $results = $table->find('versions')->toArray();
 
-        $this->assertSame(1, $results[0]['_versions'][1]['version_user_id']);
-        $this->assertSame(2, $results[0]['_versions'][2]['version_user_id']);
+        $this->assertSame(2, $results[0]['_versions'][1]['version_user_id']);
+        $this->assertSame(3, $results[0]['_versions'][2]['version_user_id']);
     }
 }
