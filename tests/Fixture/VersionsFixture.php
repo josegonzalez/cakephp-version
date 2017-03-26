@@ -16,10 +16,6 @@ namespace Josegonzalez\Version\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
-/**
- * Class TranslateFixture
- *
- */
 class VersionsFixture extends TestFixture
 {
     /**
