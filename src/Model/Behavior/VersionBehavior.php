@@ -294,11 +294,15 @@ class VersionBehavior extends Behavior
                 $versionData = [
                     $versionField => $versionId
                 ];
+
+                /* @var \Cake\Datasource\EntityInterface $versionRow */
+                $versionRow = $grouped->match(['version_id' => $versionId])->first();
+
                 foreach ($this->_config['additionalVersionFields'] as $mappedField => $field) {
                     if (!is_string($mappedField)) {
                         $mappedField = 'version_' . $field;
                     }
-                    $versionData[$mappedField] = $row->get($field);
+                    $versionData[$mappedField] = $versionRow->get($field);
                 }
 
                 $version = new $entityClass($keys + $versionData, [
