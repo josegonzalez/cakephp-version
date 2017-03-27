@@ -327,7 +327,7 @@ class VersionBehavior extends Behavior
      * Returns the versions of a specific entity.
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity.
-     * @return \Cake\Collection\Collection
+     * @return \Cake\Collection\CollectionInterface
      */
     public function getVersions(EntityInterface $entity)
     {
