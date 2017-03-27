@@ -327,10 +327,10 @@ class VersionBehavior extends Behavior
      * Returns the versions of a specific entity.
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity.
-     *
      * @return \Cake\Collection\Collection
      */
-    public function getVersions(EntityInterface $entity) {
+    public function getVersions(EntityInterface $entity)
+    {
         $primaryKey = (array)$this->_table->primaryKey();
 
         $query = $this->_table->find('versions');
