@@ -20,6 +20,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Behavior;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
@@ -320,6 +321,33 @@ class VersionBehavior extends Behavior
 
             return $row;
         });
+    }
+
+    /**
+     * Returns the versions of a specific entity.
+     *
+     * @param \Cake\Datasource\EntityInterface $entity Entity.
+     *
+     * @return \Cake\Collection\Collection
+     */
+    public function getVersions(EntityInterface $entity) {
+        $primaryKey = (array)$this->_table->primaryKey();
+
+        $query = $this->_table->find('versions');
+        $pkValue = $entity->extract($primaryKey);
+        $conditions = [];
+        foreach ($pkValue as $key => $value) {
+            $field = current($query->aliasField($key));
+            $conditions[$field] = $value;
+        }
+        $entities = $query->where($conditions)->all();
+
+        if (empty($entities)) {
+            return new Collection([]);
+        }
+
+        $entity = $entities->first();
+        return $entity->get('_versions');
     }
 
     /**
