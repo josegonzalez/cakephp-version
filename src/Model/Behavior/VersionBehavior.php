@@ -347,6 +347,7 @@ class VersionBehavior extends Behavior
         }
 
         $entity = $entities->first();
+
         return $entity->get('_versions');
     }
 
