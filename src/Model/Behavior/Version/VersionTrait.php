@@ -35,7 +35,7 @@ trait VersionTrait
             return $this->get('_versions');
         }
 
-        /**
+        /*
          * @var \Josegonzalez\Version\Model\Behavior\VersionBehavior $table
          * @var \Cake\Datasource\EntityInterface $this
          */
