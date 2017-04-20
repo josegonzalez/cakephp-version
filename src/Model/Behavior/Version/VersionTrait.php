@@ -35,24 +35,13 @@ trait VersionTrait
             return $this->get('_versions');
         }
 
+        /*
+         * @var \Josegonzalez\Version\Model\Behavior\VersionBehavior $table
+         * @var \Cake\Datasource\EntityInterface $this
+         */
         $table = TableRegistry::get($this->source());
-        $primaryKey = (array)$table->primaryKey();
-
-        $query = $table->find('versions');
-        $pkValue = $this->extract($primaryKey);
-        $conditions = [];
-        foreach ($pkValue as $key => $value) {
-            $field = current($query->aliasField($key));
-            $conditions[$field] = $value;
-        }
-        $entities = $query->where($conditions)->all();
-
-        if (empty($entities)) {
-            return new Collection([]);
-        }
-
-        $entity = $entities->first();
-        $this->set('_versions', $entity->get('_versions'));
+        $versions = $table->getVersions($this);
+        $this->set('_versions', $versions);
 
         return $this->get('_versions');
     }
