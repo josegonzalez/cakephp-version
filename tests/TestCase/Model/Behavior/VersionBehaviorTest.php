@@ -348,4 +348,25 @@ class VersionBehaviorTest extends TestCase
         $this->assertSame(2, $results[0]['_versions'][1]['version_user_id']);
         $this->assertSame(3, $results[0]['_versions'][2]['version_user_id']);
     }
+
+    /**
+     * @return void
+     */
+    public function testAssociations()
+    {
+        $table = TableRegistry::get('Articles', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
+        ]);
+        $table->addBehavior('Josegonzalez/Version.Version');
+
+        $this->assertTrue($table->associations()->has('articleversion'));
+        $versions = $table->association('articleversion');
+        $this->assertInstanceOf('Cake\Orm\Association\HasMany', $versions);
+        $this->assertEquals('__version', $versions->property());
+
+        $this->assertTrue($table->associations()->has('articlebodyversion'));
+        $bodyVersions = $table->association('articlebodyversion');
+        $this->assertInstanceOf('Cake\Orm\Association\HasMany', $bodyVersions);
+        $this->assertEquals('body_version', $bodyVersions->property());
+    }
 }

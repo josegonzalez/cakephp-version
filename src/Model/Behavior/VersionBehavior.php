@@ -117,27 +117,31 @@ class VersionBehavior extends Behavior
         if (!$this->_table->associations()->has($name)) {
             $model = $this->_config['referenceName'];
 
+            $options += [
+                'className' => $this->_config['versionTable'],
+                'foreignKey' => $this->_config['foreignKey'],
+                'strategy' => 'subquery',
+                'dependent' => true
+            ];
+
             if ($field) {
-                $this->_table->hasOne($name, $options + [
-                    'className' => $this->_config['versionTable'],
-                    'foreignKey' => $this->_config['foreignKey'],
-                    'joinType' => 'LEFT',
+                $options += [
                     'conditions' => [
                         $name . '.model' => $model,
                         $name . '.field' => $field,
                     ],
                     'propertyName' => $field . '_version'
-                ]);
+                ];
             } else {
-                $this->_table->hasMany($name, $options + [
-                    'className' => $this->_config['versionTable'],
-                    'foreignKey' => $this->_config['foreignKey'],
-                    'strategy' => 'subquery',
-                    'conditions' => ["$name.model" => $model],
-                    'propertyName' => '__version',
-                    'dependent' => true
-                ]);
+                $options += [
+                    'conditions' => [
+                        $name . '.model' => $model
+                    ],
+                    'propertyName' => '__version'
+                ];
             }
+
+            $this->_table->hasMany($name, $options);
         }
 
         return $this->_table->association($name);
