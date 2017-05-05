@@ -167,29 +167,17 @@ class VersionBehavior extends Behavior
         $fields = $this->_fields();
         $values = $entity->extract($fields, $this->_config['onlyDirty']);
 
-        $model = $this->_config['referenceName'];
         $primaryKey = (array)$this->_table->primaryKey();
-        $foreignKey = $this->_extractForeignKey($entity);
         $versionField = $this->_config['versionField'];
 
         if (isset($options['versionId'])) {
             $versionId = $options['versionId'];
         } else {
-            $table = TableRegistry::get($this->_config['versionTable']);
-            $preexistent = $table->find()
-                ->select(['version_id'])
-                ->where([
-                    'model' => $model
-                ] + $foreignKey)
-                ->order(['id desc'])
-                ->limit(1)
-                ->hydrate(false)
-                ->toArray();
-
-            $versionId = Hash::get($preexistent, '0.version_id', 0) + 1;
+            $versionId = $this->getVersionId($entity) + 1;
         }
         $created = new DateTime();
         $new = [];
+        $entityClass = TableRegistry::get($this->_config['versionTable'])->entityClass();
         foreach ($values as $field => $content) {
             if (in_array($field, $primaryKey) || $field == $versionField) {
                 continue;
@@ -197,11 +185,11 @@ class VersionBehavior extends Behavior
 
             $data = [
                 'version_id' => $versionId,
-                'model' => $model,
+                'model' => $this->_config['referenceName'],
                 'field' => $field,
                 'content' => $content,
                 'created' => $created,
-            ] + $foreignKey;
+            ] + $this->_extractForeignKey($entity);
 
             $event = new Event('Model.Version.beforeSave', $this, $options);
             $userData = EventManager::instance()->dispatch($event);
@@ -209,7 +197,6 @@ class VersionBehavior extends Behavior
                 $data = array_merge($data, $userData->result);
             }
 
-            $entityClass = $table->entityClass();
             $new[$field] = new $entityClass($data, [
                 'useSetters' => false,
                 'markNew' => true
@@ -233,6 +220,28 @@ class VersionBehavior extends Behavior
     {
         $property = $this->versionAssociation()->property();
         $entity->unsetProperty($property);
+    }
+
+    /**
+     * return the last version id
+     *
+     * @param \Cake\Datasource\EntityInterface $entity Entity.
+     * @return int
+     */
+    public function getVersionId(EntityInterface $entity)
+    {
+        $table = TableRegistry::get($this->_config['versionTable']);
+        $preexistent = $table->find()
+            ->select(['version_id'])
+            ->where([
+                    'model' => $this->_config['referenceName']
+                ] + $this->_extractForeignKey($entity))
+            ->order(['id desc'])
+            ->limit(1)
+            ->hydrate(false)
+            ->toArray();
+
+        return Hash::get($preexistent, '0.version_id', 0);
     }
 
     /**
