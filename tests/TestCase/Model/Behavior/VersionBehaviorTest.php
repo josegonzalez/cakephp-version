@@ -369,4 +369,25 @@ class VersionBehaviorTest extends TestCase
         $this->assertInstanceOf('Cake\Orm\Association\HasMany', $bodyVersions);
         $this->assertEquals('body_version', $bodyVersions->property());
     }
+
+    /**
+     * @return void
+     */
+    public function testGetVersionId()
+    {
+        // init test data
+        $table = TableRegistry::get('Articles', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
+        ]);
+        $table->addBehavior('Josegonzalez/Version.Version');
+        $article = $table->find('all')->where(['version_id' => 2])->first();
+        $article->title = 'First Article Version 3';
+        $table->save($article);
+
+        // action in controller receiving outdated data
+        $table->patchEntity($article, ['version_id' => 2]);
+
+        $this->assertEquals(2, $article->version_id);
+        $this->assertEquals(3, $table->getVersionId($article));
+    }
 }
