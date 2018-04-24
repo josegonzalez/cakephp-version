@@ -145,7 +145,7 @@ class VersionBehavior extends Behavior
             $this->_table->hasMany($name, $options);
         }
 
-        return $this->_table->association($name);
+        return $this->_table->getAssociation($name);
     }
 
     /**
@@ -403,7 +403,7 @@ class VersionBehavior extends Behavior
      */
     protected function _associationName($field = null)
     {
-        $alias = Inflector::singularize($this->_table->alias());
+        $alias = Inflector::singularize($this->_table->getAlias());
         if ($field) {
             $field = Inflector::camelize($field);
         }
@@ -422,7 +422,7 @@ class VersionBehavior extends Behavior
         $name = namespaceSplit(get_class($table));
         $name = substr(end($name), 0, -5);
         if (empty($name)) {
-            $name = $table->table() ?: $table->alias();
+            $name = $table->table() ?: $table->getAlias();
             $name = Inflector::camelize($name);
         }
 
