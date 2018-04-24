@@ -46,7 +46,6 @@ class VersionListener extends EventListener
     {
         $this->_checkAssociation($event, 'versions');
         $this->_fixVersionTables($event);
-        
     }
 
     /**
