@@ -344,7 +344,7 @@ class VersionBehavior extends Behavior
      */
     public function getVersions(EntityInterface $entity)
     {
-        $primaryKey = (array)$this->_table->primaryKey();
+        $primaryKey = (array)$this->_table->getPrimaryKey();
 
         $query = $this->_table->find('versions');
         $pkValue = $entity->extract($primaryKey);
@@ -422,7 +422,7 @@ class VersionBehavior extends Behavior
         $name = namespaceSplit(get_class($table));
         $name = substr(end($name), 0, -5);
         if (empty($name)) {
-            $name = $table->table() ?: $table->getAlias();
+            $name = $table->getTable() ?: $table->getAlias();
             $name = Inflector::camelize($name);
         }
 

@@ -53,7 +53,7 @@ class VersionBehaviorTest extends TestCase
         $versionTable = TableRegistry::get('Version');
         $results = $versionTable->find('all')
             ->where(['foreign_key' => $article->id])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $this->assertCount(8, $results);
 
@@ -63,7 +63,7 @@ class VersionBehaviorTest extends TestCase
         $versionTable = TableRegistry::get('Version');
         $results = $versionTable->find('all')
             ->where(['foreign_key' => $article->id])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
 
         $this->assertEquals(3, $article->version_id);
@@ -166,7 +166,7 @@ class VersionBehaviorTest extends TestCase
         $versionTable = TableRegistry::get('Version');
         $results = $versionTable->find('all')
             ->where(['foreign_key' => $article->id, 'version_id' => 3])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
 
         $this->assertCount(1, $results);
@@ -191,7 +191,7 @@ class VersionBehaviorTest extends TestCase
         $versionTable = TableRegistry::get('Version');
         $results = $versionTable->find('all')
             ->where(['foreign_key' => $article->id, 'version_id' => 3])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
 
         $this->assertCount(2, $results);
@@ -225,7 +225,7 @@ class VersionBehaviorTest extends TestCase
         ]);
         $table->addBehavior('Josegonzalez/Version.Version');
         $article = $table->find('all')->first();
-        EventManager::instance()->attach(
+        EventManager::instance()->on(
             function ($event) {
                 return [
                     'custom_field' => 'bar',
@@ -237,7 +237,7 @@ class VersionBehaviorTest extends TestCase
 
         $results = $versionTable->find('all')
             ->where(['foreign_key' => $article->id])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $this->assertEquals('foo', $results[4]['custom_field']);
 
@@ -246,7 +246,7 @@ class VersionBehaviorTest extends TestCase
 
         $results = $versionTable->find('all')
             ->where(['foreign_key' => $article->id])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
         $this->assertEquals('bar', $results[9]['custom_field']);
     }
@@ -261,7 +261,7 @@ class VersionBehaviorTest extends TestCase
         ]);
         $table->addBehavior('Josegonzalez/Version.Version');
         $article = $table->find('all')->first();
-        EventManager::instance()->attach(
+        EventManager::instance()->on(
             function ($event) {
                 return [
                     'nonsense' => 'bar',
@@ -273,7 +273,7 @@ class VersionBehaviorTest extends TestCase
 
         $results = $versionTable->find('all')
                                 ->where(['foreign_key' => $article->id])
-                                ->hydrate(false)
+                                ->enableHydration(false)
                                 ->toArray();
         $this->assertEquals('foo', $results[4]['custom_field']);
 
@@ -282,7 +282,7 @@ class VersionBehaviorTest extends TestCase
 
         $results = $versionTable->find('all')
                                 ->where(['foreign_key' => $article->id])
-                                ->hydrate(false)
+                                ->enableHydration(false)
                                 ->toArray();
         $this->assertNull($results[9]['custom_field']);
     }
@@ -360,14 +360,14 @@ class VersionBehaviorTest extends TestCase
         $table->addBehavior('Josegonzalez/Version.Version');
 
         $this->assertTrue($table->associations()->has('articleversion'));
-        $versions = $table->association('articleversion');
+        $versions = $table->getAssociation('articleversion');
         $this->assertInstanceOf('Cake\Orm\Association\HasMany', $versions);
-        $this->assertEquals('__version', $versions->property());
+        $this->assertEquals('__version', $versions->getProperty());
 
         $this->assertTrue($table->associations()->has('articlebodyversion'));
-        $bodyVersions = $table->association('articlebodyversion');
+        $bodyVersions = $table->getAssociation('articlebodyversion');
         $this->assertInstanceOf('Cake\Orm\Association\HasMany', $bodyVersions);
-        $this->assertEquals('body_version', $bodyVersions->property());
+        $this->assertEquals('body_version', $bodyVersions->getProperty());
     }
 
     /**
