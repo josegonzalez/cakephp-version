@@ -39,7 +39,7 @@ trait VersionTrait
          * @var \Josegonzalez\Version\Model\Behavior\VersionBehavior $table
          * @var \Cake\Datasource\EntityInterface $this
          */
-        $table = TableRegistry::get($this->source());
+        $table = TableRegistry::get($this->getSource());
         $versions = $table->getVersions($this);
         $this->set('_versions', $versions);
 

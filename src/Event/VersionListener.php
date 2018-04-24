@@ -46,6 +46,7 @@ class VersionListener extends EventListener
     {
         $this->_checkAssociation($event, 'versions');
         $this->_fixVersionTables($event);
+        
     }
 
     /**
@@ -79,7 +80,7 @@ class VersionListener extends EventListener
     {
         $subject = $event->subject;
         $connection = ConnectionManager::get($subject->viewVars['connection']);
-        $schema = $connection->schemaCollection();
+        $schema = $connection->getSchemaCollection();
 
         $versionTable = sprintf('%s_%s', Hash::get($event->subject->viewVars, 'table'), $tableSuffix);
         if (!in_array($versionTable, $schema->listTables())) {

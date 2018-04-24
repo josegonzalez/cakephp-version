@@ -24,7 +24,7 @@ abstract class EventListener implements EventListenerInterface
     public function __construct(CakeEvent $event)
     {
         $this->event = $event;
-        $this->eventManager()->attach($this);
+        $this->eventManager()->on($this);
     }
 
     /**

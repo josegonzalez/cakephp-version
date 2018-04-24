@@ -13,13 +13,13 @@
     ],
     "require": {
         "cakephp/orm": "~3.0",
-        "php": ">=5.5"
+        "php": ">=5.5",
+        "php-coveralls/php-coveralls": "^2.0"
     },
     "require-dev": {
         "cakephp/cakephp": "~3.0",
         "phpunit/phpunit": "^4.1 || ^5.0",
-        "cakephp/cakephp-codesniffer": "dev-master",
-        "satooshi/php-coveralls": "dev-master"
+        "cakephp/cakephp-codesniffer": "dev-master"
     },
     "autoload": {
         "psr-4": {
