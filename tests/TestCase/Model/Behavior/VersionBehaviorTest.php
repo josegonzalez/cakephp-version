@@ -226,12 +226,12 @@ class VersionBehaviorTest extends TestCase
         $table->addBehavior('Josegonzalez/Version.Version');
         $article = $table->find('all')->first();
         EventManager::instance()->on(
+            'Model.Version.beforeSave',
             function ($event) {
                 return [
                     'custom_field' => 'bar',
                 ];
-            },
-            'Model.Version.beforeSave'
+            }
         );
         $versionTable = TableRegistry::get('Version');
 
@@ -262,12 +262,12 @@ class VersionBehaviorTest extends TestCase
         $table->addBehavior('Josegonzalez/Version.Version');
         $article = $table->find('all')->first();
         EventManager::instance()->on(
+            'Model.Version.beforeSave',
             function ($event) {
                 return [
                     'nonsense' => 'bar',
                 ];
-            },
-            'Model.Version.beforeSave'
+            }
         );
         $versionTable = TableRegistry::get('Version');
 
