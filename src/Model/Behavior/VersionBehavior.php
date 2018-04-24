@@ -160,14 +160,14 @@ class VersionBehavior extends Behavior
     public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
     {
         $association = $this->versionAssociation();
-        $name = $association->name();
+        $name = $association->getName();
         $newOptions = [$name => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
         $fields = $this->_fields();
         $values = $entity->extract($fields, $this->_config['onlyDirty']);
 
-        $primaryKey = (array)$this->_table->primaryKey();
+        $primaryKey = (array)$this->_table->getPrimaryKey();
         $versionField = $this->_config['versionField'];
 
         if (isset($options['versionId'])) {
@@ -177,7 +177,7 @@ class VersionBehavior extends Behavior
         }
         $created = new DateTime();
         $new = [];
-        $entityClass = TableRegistry::get($this->_config['versionTable'])->entityClass();
+        $entityClass = TableRegistry::get($this->_config['versionTable'])->getEntityClass();
         foreach ($values as $field => $content) {
             if (in_array($field, $primaryKey) || $field == $versionField) {
                 continue;
@@ -203,8 +203,8 @@ class VersionBehavior extends Behavior
             ]);
         }
 
-        $entity->set($association->property(), $new);
-        if (!empty($versionField) && in_array($versionField, $this->_table->schema()->columns())) {
+        $entity->set($association->getProperty(), $new);
+        if (!empty($versionField) && in_array($versionField, $this->_table->getSchema()->columns())) {
             $entity->set($this->_config['versionField'], $versionId);
         }
     }
@@ -218,7 +218,7 @@ class VersionBehavior extends Behavior
      */
     public function afterSave(Event $event, EntityInterface $entity)
     {
-        $property = $this->versionAssociation()->property();
+        $property = $this->versionAssociation()->getProperty();
         $entity->unsetProperty($property);
     }
 
@@ -238,7 +238,7 @@ class VersionBehavior extends Behavior
                 ] + $this->_extractForeignKey($entity))
             ->order(['id desc'])
             ->limit(1)
-            ->hydrate(false)
+            ->enableHydration(false)
             ->toArray();
 
         return Hash::get($preexistent, '0.version_id', 0);
@@ -263,7 +263,7 @@ class VersionBehavior extends Behavior
     public function findVersions(Query $query, array $options)
     {
         $association = $this->versionAssociation();
-        $name = $association->name();
+        $name = $association->getName();
 
         return $query
             ->contain([$name => function (Query $q) use ($name, $options, $query) {
@@ -295,7 +295,7 @@ class VersionBehavior extends Behavior
      */
     public function groupVersions($results)
     {
-        $property = $this->versionAssociation()->property();
+        $property = $this->versionAssociation()->getProperty();
 
         return $results->map(function (EntityInterface $row) use ($property) {
             $versionField = $this->_config['versionField'];
@@ -304,7 +304,7 @@ class VersionBehavior extends Behavior
 
             $result = [];
             foreach ($grouped->combine('field', 'content', 'version_id') as $versionId => $keys) {
-                $entityClass = $this->_table->entityClass();
+                $entityClass = $this->_table->getEntityClass();
                 $versionData = [
                     $versionField => $versionId
                 ];
@@ -371,7 +371,7 @@ class VersionBehavior extends Behavior
      */
     protected function _fields()
     {
-        $schema = $this->_table->schema();
+        $schema = $this->_table->getSchema();
         $fields = $schema->columns();
         if ($this->_config['fields'] !== null) {
             $fields = array_intersect($fields, (array)$this->_config['fields']);
@@ -389,7 +389,7 @@ class VersionBehavior extends Behavior
     protected function _extractForeignKey($entity)
     {
         $foreignKey = (array)$this->_config['foreignKey'];
-        $primaryKey = (array)$this->_table->primaryKey();
+        $primaryKey = (array)$this->_table->getPrimaryKey();
         $pkValue = $entity->extract($primaryKey);
 
         return array_combine($foreignKey, $pkValue);
