@@ -67,7 +67,7 @@ class VersionBehaviorTest extends TestCase
             ->toArray();
 
         $this->assertEquals(3, $article->version_id);
-        $this->assertCount(12, $results);
+        $this->assertCount(13, $results);
     }
 
     /**
@@ -389,5 +389,46 @@ class VersionBehaviorTest extends TestCase
 
         $this->assertEquals(2, $article->version_id);
         $this->assertEquals(3, $table->getVersionId($article));
+    }
+
+    /**
+     * tests saving a non scalar db type, such as JSON
+     *
+     * @return void
+     */
+    public function testSaveNonScalarType()
+    {
+        $table = TableRegistry::get('Articles', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
+        ]);
+        $schema = $table->getSchema();
+        $schema->setColumnType('settings', 'json');
+        $table->setSchema($schema);
+        $table->addBehavior('Josegonzalez/Version.Version');
+
+        $data = ['test' => 'array'];
+        $article = $table->get(1);
+        $article->settings = $data;
+        $table->saveOrFail($article);
+
+        $version = $article->version($article->version_id);
+        $this->assertSame($data, $version->settings);
+    }
+
+    /**
+     * tests versions convert types
+     *
+     * @return void
+     */
+    public function testVersionConvertsType()
+    {
+        $table = TableRegistry::get('Articles', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
+        ]);
+        $table->addBehavior('Josegonzalez/Version.Version');
+
+        $article = $table->get(1);
+        $version = $article->version($article->version_id);
+        $this->assertInternalType('int', $version->author_id);
     }
 }
