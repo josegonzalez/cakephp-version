@@ -16,6 +16,7 @@ namespace Josegonzalez\Version\Model\Behavior;
 
 use ArrayObject;
 use Cake\Collection\Collection;
+use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
@@ -26,6 +27,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use DateTime;
+use InvalidArgumentException;
 
 /**
  * This behavior provides a way to version dynamic data by keeping versions
@@ -183,11 +185,13 @@ class VersionBehavior extends Behavior
                 continue;
             }
 
+            $converted = $this->_convertFieldsToType([$field => $content], 'toDatabase');
+
             $data = [
                 'version_id' => $versionId,
                 'model' => $this->_config['referenceName'],
                 'field' => $field,
-                'content' => $content,
+                'content' => $converted[$field],
                 'created' => $created,
             ] + $this->_extractForeignKey($entity);
 
@@ -309,6 +313,8 @@ class VersionBehavior extends Behavior
                     $versionField => $versionId
                 ];
 
+                $keys = $this->_convertFieldsToType($keys, 'toPHP');
+
                 /* @var \Cake\Datasource\EntityInterface $versionRow */
                 $versionRow = $grouped->match(['version_id' => $versionId])->first();
 
@@ -427,5 +433,30 @@ class VersionBehavior extends Behavior
         }
 
         return $name;
+    }
+
+    /**
+     * Converts fields to the appropriate type to be stored in the version, and
+     * to be converted from the version record to the entity
+     *
+     * @param array $fields Fields to convert
+     * @param string $direction Direction (toPHP or toDatabase)
+     * @return array
+     */
+    protected function _convertFieldsToType(array $fields, $direction)
+    {
+        if (!in_array($direction, ['toPHP', 'toDatabase'])) {
+            throw new InvalidArgumentException(sprintf('Cannot convert type, Cake\Database\Type::%s does not exist', $direction));
+        }
+
+        $driver = $this->_table->getConnection()->getDriver();
+        foreach ($fields as $field => $content) {
+            $column = $this->_table->getSchema()->getColumn($field);
+            $type = Type::build($column['type']);
+
+            $fields[$field] = $type->{$direction}($content, $driver);
+        }
+
+        return $fields;
     }
 }

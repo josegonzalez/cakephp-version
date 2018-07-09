@@ -8,8 +8,10 @@ use Cake\I18n\I18n;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use Josegonzalez\Version\Model\Behavior\VersionBehavior;
 use Josegonzalez\Version\Model\Behavior\Version\VersionTrait;
+use ReflectionObject;
 
 class TestEntity extends Entity
 {
@@ -67,7 +69,7 @@ class VersionBehaviorTest extends TestCase
             ->toArray();
 
         $this->assertEquals(3, $article->version_id);
-        $this->assertCount(12, $results);
+        $this->assertCount(13, $results);
     }
 
     /**
@@ -389,5 +391,111 @@ class VersionBehaviorTest extends TestCase
 
         $this->assertEquals(2, $article->version_id);
         $this->assertEquals(3, $table->getVersionId($article));
+    }
+
+    /**
+     * tests saving a non scalar db type, such as JSON
+     *
+     * @return void
+     */
+    public function testSaveNonScalarType()
+    {
+        $table = TableRegistry::get('Articles', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
+        ]);
+        $schema = $table->getSchema();
+        $schema->setColumnType('settings', 'json');
+        $table->setSchema($schema);
+        $table->addBehavior('Josegonzalez/Version.Version');
+
+        $data = ['test' => 'array'];
+        $article = $table->get(1);
+        $article->settings = $data;
+        $table->saveOrFail($article);
+
+        $version = $article->version($article->version_id);
+        $this->assertSame($data, $version->settings);
+    }
+
+    /**
+     * tests versions convert types
+     *
+     * @return void
+     */
+    public function testVersionConvertsType()
+    {
+        $table = TableRegistry::get('Articles', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
+        ]);
+        $table->addBehavior('Josegonzalez/Version.Version');
+
+        $article = $table->get(1);
+        $version = $article->version($article->version_id);
+        $this->assertInternalType('int', $version->author_id);
+    }
+
+    /**
+     * tests _convertFieldsToType
+     *
+     * @return void
+     */
+    public function testConvertFieldsToType()
+    {
+        $table = TableRegistry::get('Articles', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
+        ]);
+        $schema = $table->getSchema();
+        $schema->setColumnType('settings', 'json');
+        $table->setSchema($schema);
+        $behavior = new VersionBehavior($table);
+
+        $reflection = new ReflectionObject($behavior);
+        $method = $reflection->getMethod('_convertFieldsToType');
+        $method->setAccessible(true);
+
+        $data = ['test' => 'array'];
+        $fields = [
+            'settings' => json_encode($data),
+            'author_id' => '1',
+            'body' => 'text',
+        ];
+        $fields = $method->invokeArgs($behavior, [$fields, 'toPHP']);
+        $this->assertInternalType('array', $fields['settings']);
+        $this->assertSame($data, $fields['settings']);
+        $this->assertInternalType('int', $fields['author_id']);
+        $this->assertInternalType('string', $fields['body']);
+
+        $data = ['test' => 'array'];
+        $fields = [
+            'settings' => ['test' => 'array'],
+            'author_id' => 1,
+            'body' => 'text',
+        ];
+        $fields = $method->invokeArgs($behavior, [$fields, 'toDatabase']);
+        $this->assertInternalType('string', $fields['settings']);
+        $this->assertSame(json_encode($data), $fields['settings']);
+        $this->assertInternalType('int', $fields['author_id']);
+        $this->assertInternalType('string', $fields['body']);
+    }
+
+    /**
+     * tests passing an invalid direction to _convertFieldsToType
+     *
+     * @return void
+     */
+    public function testConvertFieldsToTypeInvalidDirection()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $table = TableRegistry::get('Articles', [
+            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
+        ]);
+        $behavior = new VersionBehavior($table);
+
+        $reflection = new ReflectionObject($behavior);
+        $method = $reflection->getMethod('_convertFieldsToType');
+        $method->setAccessible(true);
+
+        $method->invokeArgs($behavior, [[], 'invalidDirection']);
     }
 }
