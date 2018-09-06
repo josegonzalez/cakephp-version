@@ -27,9 +27,8 @@ Or run the following command directly without changing your `composer.json`:
 
 `composer require josegonzalez/cakephp-version:dev-master`
 
-## Usage
 
-In your app's `config/bootstrap.php` add:
+In your app's `config/bootstrap.php` add to load the Plugin:
 
 ```php
 Plugin::load('Josegonzalez/Version', ['bootstrap' => true]);
@@ -93,7 +92,7 @@ class PostEntity extends Entity {
 }
 ```
 
-Attach the behavior in the models you want with:
+Attach the behavior in the table initialize function you want with:
 
 ```php
 public function initialize(array $config) {
@@ -259,3 +258,4 @@ There are five behavior configurations that may be used:
 - `additionalVersionFields`: (Default `['created']`) The additional or custom fields of the versioned table to be exposed as well. By default prefixed with `version_`, e.g. `'version_user_id'` for `'user_id'`.
 - `referenceName`: (Default: db table name) Discriminator used to identify records in the version table.
 - `onlyDirty`: (Default: false) Set to true to version only dirty properties.
+- `fields`: List of fields which should get saved in the versions table, if not defined all fields will be saved. Can be string or array
