@@ -135,8 +135,10 @@ CREATE TABLE `version` (
 ```
 
 Then define an event listener to handle the event and pass in additional metadata, for example:
-
+App/src/Event/VersionListener.php
 ```php
+namespace App\Event;
+
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 
@@ -158,7 +160,7 @@ class VersionListener implements EventListenerInterface {
 ```
 
 Your event listener can then be attached in your project, for example:
-
+in bootstrap.php
 ```php
 use App\Event\VersionListener;
 use Cake\Event\EventManager;
@@ -172,7 +174,7 @@ This can provide useful functionality, but ensure that if your event listener re
 `version_id`, `model`, `foreign_key`, `field`, `content` or `created` that this is the intended behavior.
 
 #### Storing user_id as Meta Data
-To store the `user_id` as additional meta data is easiest in combination with [Muffin/Footprint](https://github.com/UseMuffin/Footprint).
+To store the `modified by user id` as additional meta data is easiest in combination with [Muffin/Footprint](https://github.com/UseMuffin/Footprint).
 The above `insertAdditionalData()` method could then look like this:
 
 ```php
@@ -184,13 +186,14 @@ The above `insertAdditionalData()` method could then look like this:
     public function insertAdditionalData(Event $event) 
     {
         $data = [
-            ...
+           //your additional custom data 
         ];
 
+        //get modified_by_user_id from footprint plugin which holds the current logged in user entity
         if ($event->data('_footprint')) {
             $user = $event->data('_footprint');
-            $data += [
-                'user_id' => $user['id'],
+            $data += [                
+                'modified_by_user_id' => $user->id,
             ];
         }
 
