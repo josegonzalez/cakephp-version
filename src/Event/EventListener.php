@@ -50,7 +50,7 @@ abstract class EventListener implements EventListenerInterface
     {
         $template = sprintf('Bake/%s.ctp', $type);
 
-        return strpos($this->event->data[0], $template) !== false;
+        return strpos($this->event->getData('0'), $template) !== false;
     }
 
     /**
