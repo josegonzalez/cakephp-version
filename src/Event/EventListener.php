@@ -24,7 +24,7 @@ abstract class EventListener implements EventListenerInterface
     public function __construct(CakeEvent $event)
     {
         $this->event = $event;
-        $this->eventManager()->on($this);
+        $this->getEventManager()->on($this);
     }
 
     /**
@@ -50,7 +50,7 @@ abstract class EventListener implements EventListenerInterface
     {
         $template = sprintf('Bake/%s.ctp', $type);
 
-        return strpos($this->event->data[0], $template) !== false;
+        return strpos($this->event->getData('0'), $template) !== false;
     }
 
     /**
