@@ -27,9 +27,8 @@ Or run the following command directly without changing your `composer.json`:
 
 `composer require josegonzalez/cakephp-version:dev-master`
 
-## Usage
 
-In your app's `config/bootstrap.php` add:
+In your app's `config/bootstrap.php` add to load the Plugin:
 
 ```php
 Plugin::load('Josegonzalez/Version', ['bootstrap' => true]);
@@ -93,7 +92,7 @@ class PostEntity extends Entity {
 }
 ```
 
-Attach the behavior in the models you want with:
+Attach the behavior in the table initialize function you want with:
 
 ```php
 public function initialize(array $config) {
@@ -136,8 +135,10 @@ CREATE TABLE `version` (
 ```
 
 Then define an event listener to handle the event and pass in additional metadata, for example:
-
+App/src/Event/VersionListener.php
 ```php
+namespace App\Event;
+
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 
@@ -159,7 +160,7 @@ class VersionListener implements EventListenerInterface {
 ```
 
 Your event listener can then be attached in your project, for example:
-
+in bootstrap.php
 ```php
 use App\Event\VersionListener;
 use Cake\Event\EventManager;
@@ -173,7 +174,7 @@ This can provide useful functionality, but ensure that if your event listener re
 `version_id`, `model`, `foreign_key`, `field`, `content` or `created` that this is the intended behavior.
 
 #### Storing user_id as Meta Data
-To store the `user_id` as additional meta data is easiest in combination with [Muffin/Footprint](https://github.com/UseMuffin/Footprint).
+To store the `modified by user id` as additional meta data is easiest in combination with [Muffin/Footprint](https://github.com/UseMuffin/Footprint).
 The above `insertAdditionalData()` method could then look like this:
 
 ```php
@@ -185,13 +186,14 @@ The above `insertAdditionalData()` method could then look like this:
     public function insertAdditionalData(Event $event) 
     {
         $data = [
-            ...
+           //your additional custom data 
         ];
 
+        //get modified_by_user_id from footprint plugin which holds the current logged in user entity
         if ($event->data('_footprint')) {
             $user = $event->data('_footprint');
-            $data += [
-                'user_id' => $user['id'],
+            $data += [                
+                'modified_by_user_id' => $user->id,
             ];
         }
 
@@ -259,3 +261,4 @@ There are five behavior configurations that may be used:
 - `additionalVersionFields`: (Default `['created']`) The additional or custom fields of the versioned table to be exposed as well. By default prefixed with `version_`, e.g. `'version_user_id'` for `'user_id'`.
 - `referenceName`: (Default: db table name) Discriminator used to identify records in the version table.
 - `onlyDirty`: (Default: false) Set to true to version only dirty properties.
+- `fields`: List of fields which should get saved in the versions table, if not defined all fields will be saved. Can be string or array
