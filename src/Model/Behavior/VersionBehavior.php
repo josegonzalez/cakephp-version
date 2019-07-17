@@ -234,6 +234,11 @@ class VersionBehavior extends Behavior
      */
     public function getVersionId(EntityInterface $entity)
     {
+        $versionField = $this->_config['versionField'];
+        if (!empty($versionField) && in_array($versionField, $this->_table->getSchema()->columns())) {
+            return $entity->get($this->_config['versionField']);
+        }
+        
         $table = TableRegistry::get($this->_config['versionTable']);
         $preexistent = $table->find()
             ->select(['version_id'])
