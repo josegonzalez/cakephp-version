@@ -1,6 +1,8 @@
 <?php
 // @codingStandardsIgnoreFile
 
+use Cake\Core\Plugin;
+
 $findRoot = function () {
     $root = dirname(__DIR__);
     if (is_dir($root . '/vendor/cakephp/cakephp')) {
@@ -71,7 +73,6 @@ Cake\Core\Configure::write('Session', [
     'defaults' => 'php'
 ]);
 
-\Cake\Http\BaseApplication::addPlugin('Josegonzalez/Version', ['path' => ROOT . DS, 'autoload' => true]);
 
 // Ensure default test connection is defined
 if (!getenv('db_dsn')) {
