@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -75,7 +76,7 @@ class VersionBehavior extends Behavior
      * @param array $config The configuration settings provided to this behavior.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         if ($this->_config['referenceName'] == null) {
             $this->_config['referenceName'] = $this->_referenceName();
@@ -179,7 +180,7 @@ class VersionBehavior extends Behavior
         }
         $created = new DateTime();
         $new = [];
-        $entityClass = TableRegistry::get($this->_config['versionTable'])->getEntityClass();
+        $entityClass = TableRegistry::getTableLocator()->get($this->_config['versionTable'])->getEntityClass();
         foreach ($values as $field => $content) {
             if (in_array($field, $primaryKey) || $field == $versionField) {
                 continue;
@@ -197,8 +198,8 @@ class VersionBehavior extends Behavior
 
             $event = new Event('Model.Version.beforeSave', $this, $options);
             $userData = EventManager::instance()->dispatch($event);
-            if (isset($userData->result) && is_array($userData->result)) {
-                $data = array_merge($data, $userData->result);
+            if (isset($userData) && $userData->getResult() !== null && is_array($userData->getResult())) {
+                $data = array_merge($data, $userData->getResult());
             }
 
             $new[$field] = new $entityClass($data, [
@@ -234,16 +235,28 @@ class VersionBehavior extends Behavior
      */
     public function getVersionId(EntityInterface $entity)
     {
-        $table = TableRegistry::get($this->_config['versionTable']);
-        $preexistent = $table->find()
-            ->select(['version_id'])
-            ->where([
-                    'model' => $this->_config['referenceName']
-                ] + $this->_extractForeignKey($entity))
-            ->order(['id desc'])
-            ->limit(1)
-            ->enableHydration(false)
-            ->toArray();
+        $table = TableRegistry::getTableLocator()->get($this->_config['versionTable']);
+        $extractedKey = $this->_extractForeignKey($entity);
+
+        //If any extracted key is null (in case of new entity), don't trigger db-query.
+        foreach ($extractedKey as $key) {
+            if ($key === null) {
+                $preexistent = [];
+                continue;
+            }
+        }
+
+        if (!isset($preexistent)) {
+            $preexistent = $table->find()
+                ->select(['version_id'])
+                ->where([
+                        'model' => $this->_config['referenceName']
+                    ] + $extractedKey)
+                ->order(['id desc'])
+                ->limit(1)
+                ->enableHydration(false)
+                ->toArray();
+        }
 
         return Hash::get($preexistent, '0.version_id', 0);
     }
