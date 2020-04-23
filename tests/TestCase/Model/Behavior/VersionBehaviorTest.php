@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Josegonzalez\Version\Test\TestCase\Model\Behavior;
 
 use Cake\Collection\Collection;
@@ -24,20 +25,20 @@ class VersionBehaviorTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'plugin.Josegonzalez\Version.versions',
-        'plugin.Josegonzalez\Version.versions_with_user',
-        'plugin.Josegonzalez\Version.articles',
-        'plugin.Josegonzalez\Version.articles_tags_versions',
-        'plugin.Josegonzalez\Version.articles_tags',
+        'plugin.Josegonzalez/Version.Versions',
+        'plugin.Josegonzalez/Version.VersionsWithUser',
+        'plugin.Josegonzalez/Version.Articles',
+        'plugin.Josegonzalez/Version.ArticlesTagsVersions',
+        'plugin.Josegonzalez/Version.ArticlesTags',
     ];
 
     /**
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
-        TableRegistry::clear();
+        TableRegistry::getTableLocator()->clear();
     }
 
     /**
@@ -45,14 +46,14 @@ class VersionBehaviorTest extends TestCase
      */
     public function testSaveNew()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
         ]);
         $table->addBehavior('Josegonzalez/Version.Version');
         $article = $table->find('all')->first();
         $this->assertEquals(2, $article->version_id);
 
-        $versionTable = TableRegistry::get('Version');
+        $versionTable = TableRegistry::getTableLocator()->get('Version');
         $results = $versionTable->find('all')
             ->where(['foreign_key' => $article->id])
             ->enableHydration(false)
@@ -62,7 +63,7 @@ class VersionBehaviorTest extends TestCase
         $article->title = 'Titulo';
         $table->save($article);
 
-        $versionTable = TableRegistry::get('Version');
+        $versionTable = TableRegistry::getTableLocator()->get('Version');
         $results = $versionTable->find('all')
             ->where(['foreign_key' => $article->id])
             ->enableHydration(false)
@@ -77,7 +78,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testFindVersion()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
         ]);
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -92,7 +93,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testFindVersionX()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
         ]);
         $config = [
@@ -115,7 +116,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testFindVersions()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
         ]);
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -155,7 +156,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testSaveLimitFields()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
         ]);
         $table->addBehavior('Josegonzalez/Version.Version', ['fields' => 'title']);
@@ -165,7 +166,7 @@ class VersionBehaviorTest extends TestCase
         $article->body = 'Hello world!';
         $table->save($article);
 
-        $versionTable = TableRegistry::get('Version');
+        $versionTable = TableRegistry::getTableLocator()->get('Version');
         $results = $versionTable->find('all')
             ->where(['foreign_key' => $article->id, 'version_id' => 3])
             ->enableHydration(false)
@@ -180,7 +181,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testSaveDirtyFields()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
         ]);
         $table->addBehavior('Josegonzalez/Version.Version', ['onlyDirty' => true]);
@@ -190,7 +191,7 @@ class VersionBehaviorTest extends TestCase
         $article->body = 'Hello world!';
         $table->save($article);
 
-        $versionTable = TableRegistry::get('Version');
+        $versionTable = TableRegistry::getTableLocator()->get('Version');
         $results = $versionTable->find('all')
             ->where(['foreign_key' => $article->id, 'version_id' => 3])
             ->enableHydration(false)
@@ -206,7 +207,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testFindVersionLimitFields()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
         ]);
         $table->addBehavior('Josegonzalez/Version.Version', ['fields' => 'title']);
@@ -222,7 +223,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testSaveWithValidMetaData()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
         ]);
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -235,7 +236,7 @@ class VersionBehaviorTest extends TestCase
                 ];
             }
         );
-        $versionTable = TableRegistry::get('Version');
+        $versionTable = TableRegistry::getTableLocator()->get('Version');
 
         $results = $versionTable->find('all')
             ->where(['foreign_key' => $article->id])
@@ -258,7 +259,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testSaveWithInvalidMetaData()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
         ]);
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -271,7 +272,7 @@ class VersionBehaviorTest extends TestCase
                 ];
             }
         );
-        $versionTable = TableRegistry::get('Version');
+        $versionTable = TableRegistry::getTableLocator()->get('Version');
 
         $results = $versionTable->find('all')
                                 ->where(['foreign_key' => $article->id])
@@ -294,7 +295,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testFindWithCompositeKeys()
     {
-        $table = TableRegistry::get('ArticlesTags', [
+        $table = TableRegistry::getTableLocator()->get('ArticlesTags', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
         ]);
         $table->addBehavior('Josegonzalez/Version.Version', [
@@ -313,7 +314,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testSaveWithCompositeKeys()
     {
-        $table = TableRegistry::get('ArticlesTags', [
+        $table = TableRegistry::getTableLocator()->get('ArticlesTags', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
         ]);
         $table->addBehavior('Josegonzalez/Version.Version', [
@@ -325,6 +326,7 @@ class VersionBehaviorTest extends TestCase
         $entity = $table->find()->first();
         $entity->sort_order = 3;
         $table->save($entity);
+        //$this->assertEquals(3, $entity->version_id);
         $this->assertEquals(3, $entity->version_id);
         $this->assertEquals(['sort_order' => 3, 'version_id' => 3, 'version_created' => null], $entity->version(3)->toArray());
     }
@@ -334,7 +336,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testGetAdditionalMetaData()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
         ]);
         $table->addBehavior('Josegonzalez/Version.Version', [
@@ -343,7 +345,7 @@ class VersionBehaviorTest extends TestCase
         ]);
         $article = $table->find('all')->first();
 
-        $versionTable = TableRegistry::get('Version', ['table' => 'versions_with_user']);
+        $versionTable = TableRegistry::getTableLocator()->get('Version', ['table' => 'versions_with_user']);
 
         $results = $table->find('versions')->toArray();
 
@@ -356,7 +358,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testAssociations()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
         ]);
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -378,7 +380,7 @@ class VersionBehaviorTest extends TestCase
     public function testGetVersionId()
     {
         // init test data
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
         ]);
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -400,7 +402,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testSaveNonScalarType()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
         ]);
         $schema = $table->getSchema();
@@ -424,14 +426,14 @@ class VersionBehaviorTest extends TestCase
      */
     public function testVersionConvertsType()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
         ]);
         $table->addBehavior('Josegonzalez/Version.Version');
 
         $article = $table->get(1);
         $version = $article->version($article->version_id);
-        $this->assertInternalType('int', $version->author_id);
+        $this->assertIsInt($version->author_id);
     }
 
     /**
@@ -441,7 +443,7 @@ class VersionBehaviorTest extends TestCase
      */
     public function testConvertFieldsToType()
     {
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
         ]);
         $schema = $table->getSchema();
@@ -460,10 +462,10 @@ class VersionBehaviorTest extends TestCase
             'body' => 'text',
         ];
         $fields = $method->invokeArgs($behavior, [$fields, 'toPHP']);
-        $this->assertInternalType('array', $fields['settings']);
+        $this->assertIsArray($fields['settings']);
         $this->assertSame($data, $fields['settings']);
-        $this->assertInternalType('int', $fields['author_id']);
-        $this->assertInternalType('string', $fields['body']);
+        $this->assertIsInt($fields['author_id']);
+        $this->assertIsString('string', $fields['body']);
 
         $data = ['test' => 'array'];
         $fields = [
@@ -472,10 +474,10 @@ class VersionBehaviorTest extends TestCase
             'body' => 'text',
         ];
         $fields = $method->invokeArgs($behavior, [$fields, 'toDatabase']);
-        $this->assertInternalType('string', $fields['settings']);
+        $this->assertIsString($fields['settings']);
         $this->assertSame(json_encode($data), $fields['settings']);
-        $this->assertInternalType('int', $fields['author_id']);
-        $this->assertInternalType('string', $fields['body']);
+        $this->assertIsInt($fields['author_id']);
+        $this->assertIsString($fields['body']);
     }
 
     /**
@@ -487,7 +489,7 @@ class VersionBehaviorTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $table = TableRegistry::get('Articles', [
+        $table = TableRegistry::getTableLocator()->get('Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
         ]);
         $behavior = new VersionBehavior($table);
