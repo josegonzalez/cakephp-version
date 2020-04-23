@@ -71,7 +71,7 @@ Cake\Core\Configure::write('Session', [
     'defaults' => 'php'
 ]);
 
-Cake\Core\Plugin::load('Josegonzalez/Version', ['path' => ROOT . DS, 'autoload' => true]);
+\Cake\Http\BaseApplication::addPlugin('Josegonzalez/Version', ['path' => ROOT . DS, 'autoload' => true]);
 
 // Ensure default test connection is defined
 if (!getenv('db_dsn')) {
