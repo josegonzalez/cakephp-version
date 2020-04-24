@@ -1,32 +1,39 @@
 <?php
+declare(strict_types=1);
+
 /**
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Class VersionsWithUserFixture
  *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @category CakePHP-Plugin
+ * @package  Josegonzalez\Version\Test\Fixture
+ * @author   Jose Diaz-Gonzalez <email-for-consulting@josediazgonzalez.com>
+ * @license  MIT License (https://github.com/josegonzalez/cakephp-version/blob/master/LICENSE.txt)
+ * @link     https://github.com/josegonzalez/cakephp-version
  */
 namespace Josegonzalez\Version\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
+/**
+ * Class VersionsWithUserFixture
+ *
+ * @category CakePHP-Plugin
+ * @package  Josegonzalez\Version\Test\Fixture
+ * @author   Jose Diaz-Gonzalez <email-for-consulting@josediazgonzalez.com>
+ * @license  MIT License (https://github.com/josegonzalez/cakephp-version/blob/master/LICENSE.txt)
+ * @link     https://github.com/josegonzalez/cakephp-version
+ */
 class VersionsWithUserFixture extends TestFixture
 {
     /**
-     * table property
+     * Table property
      *
      * @var string
      */
     public $table = 'versions_with_user';
 
     /**
-     * fields property
+     * Fields property
      *
      * @var array
      */
@@ -44,7 +51,7 @@ class VersionsWithUserFixture extends TestFixture
     ];
 
     /**
-     * records property
+     * Records property
      *
      * @var array
      */

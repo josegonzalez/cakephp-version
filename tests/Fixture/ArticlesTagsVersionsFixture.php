@@ -1,19 +1,40 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * Class ArticlesTagsVersionsFixture
+ *
+ * @category CakePHP-Plugin
+ * @package  Josegonzalez\Version\Test\Fixture
+ * @author   Jose Diaz-Gonzalez <email-for-consulting@josediazgonzalez.com>
+ * @license  MIT License (https://github.com/josegonzalez/cakephp-version/blob/master/LICENSE.txt)
+ * @link     https://github.com/josegonzalez/cakephp-version
+ */
+
 namespace Josegonzalez\Version\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
+/**
+ * Class ArticlesTagsVersionsFixture
+ *
+ * @category CakePHP-Plugin
+ * @package  Josegonzalez\Version\Test\Fixture
+ * @author   Jose Diaz-Gonzalez <email-for-consulting@josediazgonzalez.com>
+ * @license  MIT License (https://github.com/josegonzalez/cakephp-version/blob/master/LICENSE.txt)
+ * @link     https://github.com/josegonzalez/cakephp-version
+ */
 class ArticlesTagsVersionsFixture extends TestFixture
 {
     /**
-     * table property
+     * Table property
      *
      * @var string
      */
     public $table = 'articles_tags_versions';
 
     /**
-     * fields property
+     * Fields property
      *
      * @var array
      */
@@ -32,7 +53,7 @@ class ArticlesTagsVersionsFixture extends TestFixture
     ];
 
     /**
-     * records property
+     * Records property
      *
      * @var array
      */

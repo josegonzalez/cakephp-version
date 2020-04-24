@@ -7,7 +7,7 @@
 
 # Version
 
-A CakePHP 3.x plugin that facilitates versioned database entities
+A CakePHP 4.x plugin that facilitates versioned database entities
 
 ## Installation
 
@@ -182,7 +182,7 @@ The above `insertAdditionalData()` method could then look like this:
      *
      * @return array
      */
-    public function insertAdditionalData(Event $event) 
+    public function insertAdditionalData(Event $event)
     {
         $data = [
             ...
@@ -191,7 +191,7 @@ The above `insertAdditionalData()` method could then look like this:
         if ($event->data('_footprint')) {
             $user = $event->data('_footprint');
             $data += [
-                'user_id' => $user['id'],
+                'user_id' => $user->id,
             ];
         }
 

@@ -1,10 +1,31 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * Class EventListener
+ *
+ * @category CakePHP-Plugin
+ * @package  Josegonzalez\Version\Event
+ * @author   Jose Diaz-Gonzalez <email-for-consulting@josediazgonzalez.com>
+ * @license  MIT License (https://github.com/josegonzalez/cakephp-version/blob/master/LICENSE.txt)
+ * @link     https://github.com/josegonzalez/cakephp-version
+ */
+
 namespace Josegonzalez\Version\Event;
 
 use Cake\Event\Event as CakeEvent;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerTrait;
 
+/**
+ * Class EventListener
+ *
+ * @category CakePHP-Plugin
+ * @package  Josegonzalez\Version\Event
+ * @author   Jose Diaz-Gonzalez <email-for-consulting@josediazgonzalez.com>
+ * @license  MIT License (https://github.com/josegonzalez/cakephp-version/blob/master/LICENSE.txt)
+ * @link     https://github.com/josegonzalez/cakephp-version
+ */
 abstract class EventListener implements EventListenerInterface
 {
     use EventManagerTrait;
