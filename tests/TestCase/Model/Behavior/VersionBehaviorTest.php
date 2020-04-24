@@ -1,5 +1,16 @@
 <?php
 declare(strict_types=1);
+
+/**
+ * Class VersionBehaviorTest
+ *
+ * @category CakePHP-Plugin
+ * @package  Josegonzalez\Version\Test\TestCase\Model\Behavior
+ * @author   Jose Diaz-Gonzalez <email-for-consulting@josediazgonzalez.com>
+ * @license  MIT License (https://github.com/josegonzalez/cakephp-version/blob/master/LICENSE.txt)
+ * @link     https://github.com/josegonzalez/cakephp-version
+ */
+
 namespace Josegonzalez\Version\Test\TestCase\Model\Behavior;
 
 use Cake\Collection\Collection;
@@ -15,14 +26,37 @@ use Josegonzalez\Version\Model\Behavior\VersionBehavior;
 use Josegonzalez\Version\Model\Behavior\Version\VersionTrait;
 use ReflectionObject;
 
+/**
+ * Class TestEntity
+ *
+ * A test entity to test with.
+ *
+ * @category CakePHP-Plugin
+ * @package  Josegonzalez\Version\Test\TestCase\Model\Behavior
+ * @author   Jose Diaz-Gonzalez <email-for-consulting@josediazgonzalez.com>
+ * @license  MIT License (https://github.com/josegonzalez/cakephp-version/blob/master/LICENSE.txt)
+ * @link     https://github.com/josegonzalez/cakephp-version
+ */
 class TestEntity extends Entity
 {
     use VersionTrait;
 }
 
+/**
+ * Class VersionBehaviorTest
+ * The tests for this package.
+ *
+ * @category CakePHP-Plugin
+ * @package  Josegonzalez\Version\Test\TestCase\Model\Behavior
+ * @author   Jose Diaz-Gonzalez <email-for-consulting@josediazgonzalez.com>
+ * @license  MIT License (https://github.com/josegonzalez/cakephp-version/blob/master/LICENSE.txt)
+ * @link     https://github.com/josegonzalez/cakephp-version
+ */
 class VersionBehaviorTest extends TestCase
 {
     /**
+     * The fixtures to load.
+     *
      * @var array
      */
     public $fixtures = [
@@ -33,6 +67,13 @@ class VersionBehaviorTest extends TestCase
         'plugin.Josegonzalez/Version.ArticlesTags',
     ];
 
+    /**
+     * Overwritten method to load plugins needed for the tests.
+     *
+     * @param array $plugins The plugins to load.
+     *
+     * @return \Cake\Http\BaseApplication
+     */
     public function loadPlugins(array $plugins = []): BaseApplication
     {
         $plugins = [
@@ -42,6 +83,8 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Tidy up, after test session has been finished.
+     *
      * @return void
      */
     public function tearDown(): void
@@ -51,13 +94,17 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Save a new version
+     *
      * @return void
      */
     public function testSaveNew()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
-        ]);
+            ]
+        );
         $table->addBehavior('Josegonzalez/Version.Version');
         $article = $table->find('all')->first();
         $this->assertEquals(2, $article->version_id);
@@ -83,13 +130,17 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Find a specific version.
+     *
      * @return void
      */
     public function testFindVersion()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
-        ]);
+            ]
+        );
         $table->addBehavior('Josegonzalez/Version.Version');
         $article = $table->find('all')->first();
         $version = $article->version(1);
@@ -98,13 +149,17 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Find a specific version.
+     *
      * @return void
      */
     public function testFindVersionX()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
-        ]);
+            ]
+        );
         $config = [
             'additionalVersionFields' => [
                 'version_foo' => 'foooo',
@@ -121,13 +176,17 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Find versions of an entity.
+     *
      * @return void
      */
     public function testFindVersions()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
-        ]);
+            ]
+        );
         $table->addBehavior('Josegonzalez/Version.Version');
         $article = $table->find('all')->first();
 
@@ -161,13 +220,17 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Save with limited fields.
+     *
      * @return void
      */
     public function testSaveLimitFields()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
-        ]);
+            ]
+        );
         $table->addBehavior('Josegonzalez/Version.Version', ['fields' => 'title']);
         $article = $table->find('all')->first();
 
@@ -186,13 +249,17 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Save only dirty fields.
+     *
      * @return void
      */
     public function testSaveDirtyFields()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
-        ]);
+            ]
+        );
         $table->addBehavior('Josegonzalez/Version.Version', ['onlyDirty' => true]);
         $article = $table->find('all')->first();
 
@@ -212,13 +279,17 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Find with limited fields.
+     *
      * @return void
      */
     public function testFindVersionLimitFields()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
-        ]);
+            ]
+        );
         $table->addBehavior('Josegonzalez/Version.Version', ['fields' => 'title']);
         $article = $table->find('all')->first();
         $version = $article->version(1);
@@ -228,13 +299,17 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Save with valid custom field (meta data like user_id)
+     *
      * @return void
      */
     public function testSaveWithValidMetaData()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
-        ]);
+            ]
+        );
         $table->addBehavior('Josegonzalez/Version.Version');
         $article = $table->find('all')->first();
         EventManager::instance()->on(
@@ -264,13 +339,17 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Save with invalid custom field (meta data like user_id)
+     *
      * @return void
      */
     public function testSaveWithInvalidMetaData()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
-        ]);
+            ]
+        );
         $table->addBehavior('Josegonzalez/Version.Version');
         $article = $table->find('all')->first();
         EventManager::instance()->on(
@@ -284,34 +363,40 @@ class VersionBehaviorTest extends TestCase
         $versionTable = TableRegistry::getTableLocator()->get('Version');
 
         $results = $versionTable->find('all')
-                                ->where(['foreign_key' => $article->id])
-                                ->enableHydration(false)
-                                ->toArray();
+            ->where(['foreign_key' => $article->id])
+            ->enableHydration(false)
+            ->toArray();
         $this->assertEquals('foo', $results[4]['custom_field']);
 
         $article->title = 'Titulo';
         $table->save($article);
 
         $results = $versionTable->find('all')
-                                ->where(['foreign_key' => $article->id])
-                                ->enableHydration(false)
-                                ->toArray();
+            ->where(['foreign_key' => $article->id])
+            ->enableHydration(false)
+            ->toArray();
         $this->assertNull($results[9]['custom_field']);
     }
 
     /**
+     * Find version with composite keys (e.g. ArticlesTagsVersions)
+     *
      * @return void
      */
     public function testFindWithCompositeKeys()
     {
-        $table = TableRegistry::getTableLocator()->get('ArticlesTags', [
+        $table = TableRegistry::getTableLocator()->get(
+            'ArticlesTags', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
-        ]);
-        $table->addBehavior('Josegonzalez/Version.Version', [
+            ]
+        );
+        $table->addBehavior(
+            'Josegonzalez/Version.Version', [
             'fields' => 'sort_order',
             'versionTable' => 'articles_tags_versions',
             'foreignKey' => ['article_id', 'tag_id']
-        ]);
+            ]
+        );
 
         $entity = $table->find()->first();
         $this->assertEquals(['sort_order' => 1, 'version_id' => 1, 'version_created' => null], $entity->version(1)->toArray());
@@ -319,18 +404,24 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Save with composite keys (e.g. ArticlesTagsVersions)
+     *
      * @return void
      */
     public function testSaveWithCompositeKeys()
     {
-        $table = TableRegistry::getTableLocator()->get('ArticlesTags', [
+        $table = TableRegistry::getTableLocator()->get(
+            'ArticlesTags', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
-        ]);
-        $table->addBehavior('Josegonzalez/Version.Version', [
+            ]
+        );
+        $table->addBehavior(
+            'Josegonzalez/Version.Version', [
             'fields' => 'sort_order',
             'versionTable' => 'articles_tags_versions',
             'foreignKey' => ['article_id', 'tag_id']
-        ]);
+            ]
+        );
 
         $entity = $table->find()->first();
         $entity->sort_order = 3;
@@ -341,17 +432,23 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Get the custom fields like user_id (additional meta data)
+     *
      * @return void
      */
     public function testGetAdditionalMetaData()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
-        ]);
-        $table->addBehavior('Josegonzalez/Version.Version', [
+            ]
+        );
+        $table->addBehavior(
+            'Josegonzalez/Version.Version', [
             'versionTable' => 'versions_with_user',
             'additionalVersionFields' => ['created', 'user_id'],
-        ]);
+            ]
+        );
         $article = $table->find('all')->first();
 
         $versionTable = TableRegistry::getTableLocator()->get('Version', ['table' => 'versions_with_user']);
@@ -363,13 +460,17 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Associations correctly names / recognized?
+     *
      * @return void
      */
     public function testAssociations()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity'
-        ]);
+            ]
+        );
         $table->addBehavior('Josegonzalez/Version.Version');
 
         $this->assertTrue($table->associations()->has('articleversion'));
@@ -384,14 +485,18 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
+     * Get a specific version id
+     *
      * @return void
      */
     public function testGetVersionId()
     {
         // init test data
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
-        ]);
+            ]
+        );
         $table->addBehavior('Josegonzalez/Version.Version');
         $article = $table->find('all')->where(['version_id' => 2])->first();
         $article->title = 'First Article Version 3';
@@ -405,15 +510,17 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
-     * tests saving a non scalar db type, such as JSON
+     * Tests saving a non scalar db type, such as JSON
      *
      * @return void
      */
     public function testSaveNonScalarType()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
-        ]);
+            ]
+        );
         $schema = $table->getSchema();
         $schema->setColumnType('settings', 'json');
         $table->setSchema($schema);
@@ -429,15 +536,17 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
-     * tests versions convert types
+     * Tests versions convert types
      *
      * @return void
      */
     public function testVersionConvertsType()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
-        ]);
+            ]
+        );
         $table->addBehavior('Josegonzalez/Version.Version');
 
         $article = $table->get(1);
@@ -446,22 +555,24 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
-     * tests _convertFieldsToType
+     * Tests _convertFieldsToType
      *
      * @return void
      */
     public function testConvertFieldsToType()
     {
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
-        ]);
+            ]
+        );
         $schema = $table->getSchema();
         $schema->setColumnType('settings', 'json');
         $table->setSchema($schema);
         $behavior = new VersionBehavior($table);
 
         $reflection = new ReflectionObject($behavior);
-        $method = $reflection->getMethod('_convertFieldsToType');
+        $method = $reflection->getMethod('convertFieldsToType');
         $method->setAccessible(true);
 
         $data = ['test' => 'array'];
@@ -490,7 +601,7 @@ class VersionBehaviorTest extends TestCase
     }
 
     /**
-     * tests passing an invalid direction to _convertFieldsToType
+     * Tests passing an invalid direction to _convertFieldsToType
      *
      * @return void
      */
@@ -498,13 +609,15 @@ class VersionBehaviorTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $table = TableRegistry::getTableLocator()->get('Articles', [
+        $table = TableRegistry::getTableLocator()->get(
+            'Articles', [
             'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Behavior\TestEntity',
-        ]);
+            ]
+        );
         $behavior = new VersionBehavior($table);
 
         $reflection = new ReflectionObject($behavior);
-        $method = $reflection->getMethod('_convertFieldsToType');
+        $method = $reflection->getMethod('convertFieldsToType');
         $method->setAccessible(true);
 
         $method->invokeArgs($behavior, [[], 'invalidDirection']);

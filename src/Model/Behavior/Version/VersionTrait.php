@@ -1,16 +1,38 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * Trait VersionTrait
+ *
+ * @category CakePHP-Plugin
+ * @package  Josegonzalez\Version\Model\Behavior\Version
+ * @author   Jose Diaz-Gonzalez <email-for-consulting@josediazgonzalez.com>
+ * @license  MIT License (https://github.com/josegonzalez/cakephp-version/blob/master/LICENSE.txt)
+ * @link     https://github.com/josegonzalez/cakephp-version
+ */
+
 namespace Josegonzalez\Version\Model\Behavior\Version;
 
 use Cake\Collection\Collection;
 use Cake\ORM\TableRegistry;
 
+/**
+ * Trait VersionTrait
+ *
+ * @category CakePHP-Plugin
+ * @package  Josegonzalez\Version\Model\Behavior\Version
+ * @author   Jose Diaz-Gonzalez <email-for-consulting@josediazgonzalez.com>
+ * @license  MIT License (https://github.com/josegonzalez/cakephp-version/blob/master/LICENSE.txt)
+ * @link     https://github.com/josegonzalez/cakephp-version
+ */
 trait VersionTrait
 {
     /**
      * Retrieves a specified version for the current entity
      *
-     * @param int $versionId The version number to retrieve
-     * @param bool $reset If true, will re-retrieve the related version collection
+     * @param int  $versionId The version number to retrieve
+     * @param bool $reset     If true, will re-retrieve the related version collection
+     *
      * @return \Cake\ORM\Entity|null
      */
     public function version($versionId, $reset = false)
@@ -27,6 +49,7 @@ trait VersionTrait
      * Retrieves the related versions for the current entity
      *
      * @param bool $reset If true, will re-retrieve the related version collection
+     *
      * @return \Cake\Collection\CollectionInterface
      */
     public function versions($reset = false)
