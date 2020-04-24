@@ -15,7 +15,6 @@ namespace Josegonzalez\Version\Event;
 
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 
 /**
@@ -32,8 +31,7 @@ class VersionListener extends EventListener
     /**
      * Called before the entity template is rendered
      *
-     * @param Event $event An Event instance
-     *
+     * @param \Cake\Event\Event $event An Event instance
      * @return void
      */
     public function beforeRenderEntity(Event $event)
@@ -44,8 +42,7 @@ class VersionListener extends EventListener
     /**
      * Called before the test case template is rendered
      *
-     * @param Event $event An Event instance
-     *
+     * @param \Cake\Event\Event $event An Event instance
      * @return void
      */
     public function beforeRenderTestCase(Event $event)
@@ -62,8 +59,7 @@ class VersionListener extends EventListener
     /**
      * Called before the table template is rendered
      *
-     * @param Event $event An Event instance
-     *
+     * @param \Cake\Event\Event $event An Event instance
      * @return void
      */
     public function beforeRenderTable(Event $event)
@@ -75,8 +71,7 @@ class VersionListener extends EventListener
     /**
      * Removes unnecessary associations
      *
-     * @param Event $event An Event instance
-     *
+     * @param \Cake\Event\Event $event An Event instance
      * @return void
      */
     protected function fixVersionTables(Event $event)
@@ -96,9 +91,8 @@ class VersionListener extends EventListener
     /**
      * Attaches the behavior and modifies associations as necessary
      *
-     * @param Event  $event       An Event instance
+     * @param \Cake\Event\Event $event An Event instance
      * @param string $tableSuffix a suffix for the primary table
-     *
      * @return bool true if modified, false otherwise
      */
     protected function checkAssociation(Event $event, $tableSuffix)
@@ -125,8 +119,7 @@ class VersionListener extends EventListener
     /**
      * Removes unnecessary belongsTo associations
      *
-     * @param Event $event An Event instance
-     *
+     * @param \Cake\Event\Event $event An Event instance
      * @return array
      */
     protected function modifyBelongsTo(Event $event)
@@ -147,8 +140,7 @@ class VersionListener extends EventListener
     /**
      * Removes unnecessary rulesChecker entries
      *
-     * @param Event $event An Event instance
-     *
+     * @param \Cake\Event\Event $event An Event instance
      * @return array
      */
     protected function modifyRulesChecker(Event $event)

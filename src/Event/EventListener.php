@@ -17,7 +17,6 @@ use Cake\Event\Event as CakeEvent;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerTrait;
 
-
 /**
  * Class EventListener
  *
@@ -66,7 +65,6 @@ abstract class EventListener implements EventListenerInterface
      * Check whether or not a bake call is a certain type.
      *
      * @param string|array $type The type of file you want to check.
-     *
      * @return bool Whether or not the bake template is the type you are checking.
      */
     public function isType($type)

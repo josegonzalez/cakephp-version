@@ -40,7 +40,7 @@ class ArticlesFixture extends TestFixture
         'body' => 'text',
         'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
         'settings' => ['type' => 'json', 'null' => true],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**

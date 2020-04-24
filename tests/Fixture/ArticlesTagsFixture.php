@@ -38,7 +38,7 @@ class ArticlesTagsFixture extends TestFixture
         'tag_id' => ['type' => 'integer'],
         'version_id' => ['type' => 'integer', 'null' => true],
         'sort_order' => ['type' => 'integer', 'default' => 1],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]],
     ];
 
     /**

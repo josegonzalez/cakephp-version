@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Class VersionBehavior
  *
@@ -19,7 +20,6 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Behavior;
-use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
@@ -44,7 +44,6 @@ use InvalidArgumentException;
  */
 class VersionBehavior extends Behavior
 {
-
     /**
      * Table instance
      *
@@ -81,7 +80,6 @@ class VersionBehavior extends Behavior
      * the constructor and call parent.
      *
      * @param array $config The configuration settings provided to this behavior.
-     *
      * @return void
      */
     public function initialize(array $config): void
@@ -100,13 +98,12 @@ class VersionBehavior extends Behavior
      * used for fetching all versions for each record in the bound table
      *
      * @param string $table the table name to use for storing each field version
-     *
      * @return void
      */
     public function setupFieldAssociations($table)
     {
         $options = [
-            'table' => $table
+            'table' => $table,
         ];
 
         foreach ($this->fields() as $field) {
@@ -121,7 +118,6 @@ class VersionBehavior extends Behavior
      *
      * @param string|null $field   Field name for per-field association.
      * @param array       $options Association options.
-     *
      * @return \Cake\ORM\Association
      */
     public function versionAssociation($field = null, $options = [])
@@ -135,7 +131,7 @@ class VersionBehavior extends Behavior
                 'className' => $this->_config['versionTable'],
                 'foreignKey' => $this->_config['foreignKey'],
                 'strategy' => 'subquery',
-                'dependent' => true
+                'dependent' => true,
             ];
 
             if ($field) {
@@ -144,14 +140,14 @@ class VersionBehavior extends Behavior
                         $name . '.model' => $model,
                         $name . '.field' => $field,
                     ],
-                    'propertyName' => $field . '_version'
+                    'propertyName' => $field . '_version',
                 ];
             } else {
                 $options += [
                     'conditions' => [
-                        $name . '.model' => $model
+                        $name . '.model' => $model,
                     ],
-                    'propertyName' => '__version'
+                    'propertyName' => '__version',
                 ];
             }
 
@@ -168,7 +164,6 @@ class VersionBehavior extends Behavior
      * @param \Cake\Event\Event                $event   The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity  The entity that is going to be saved
      * @param \ArrayObject                     $options the options passed to the save method
-     *
      * @return void
      */
     public function beforeSave(Event $event, EntityInterface $entity, ArrayObject $options)
@@ -214,9 +209,10 @@ class VersionBehavior extends Behavior
             }
 
             $new[$field] = new $entityClass(
-                $data, [
+                $data,
+                [
                 'useSetters' => false,
-                'markNew' => true
+                'markNew' => true,
                 ]
             );
         }
@@ -232,7 +228,6 @@ class VersionBehavior extends Behavior
      *
      * @param \Cake\Event\Event                $event  The beforeSave event that was fired
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
-     *
      * @return void
      */
     public function afterSave(Event $event, EntityInterface $entity)
@@ -245,7 +240,6 @@ class VersionBehavior extends Behavior
      * Return the last version id
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity.
-     *
      * @return int
      */
     public function getVersionId(EntityInterface $entity)
@@ -266,7 +260,7 @@ class VersionBehavior extends Behavior
                 ->select(['version_id'])
                 ->where(
                     [
-                        'model' => $this->_config['referenceName']
+                        'model' => $this->_config['referenceName'],
                     ] + $extractedKey
                 )
                 ->order(['id desc'])
@@ -292,7 +286,6 @@ class VersionBehavior extends Behavior
      *
      * @param \Cake\ORM\Query $query   The original query to modify
      * @param array           $options Options
-     *
      * @return \Cake\ORM\Query
      */
     public function findVersions(Query $query, array $options)
@@ -328,7 +321,6 @@ class VersionBehavior extends Behavior
      * into each entity under the `_versions` key
      *
      * @param \Cake\Datasource\ResultSetInterface $results Results to modify.
-     *
      * @return \Cake\Collection\CollectionInterface
      */
     public function groupVersions($results)
@@ -345,12 +337,12 @@ class VersionBehavior extends Behavior
                 foreach ($grouped->combine('field', 'content', 'version_id') as $versionId => $keys) {
                     $entityClass = $this->_table->getEntityClass();
                     $versionData = [
-                    $versionField => $versionId
+                    $versionField => $versionId,
                     ];
 
                     $keys = $this->convertFieldsToType($keys, 'toPHP');
 
-                    /* @var \Cake\Datasource\EntityInterface $versionRow */
+                    /** @var \Cake\Datasource\EntityInterface $versionRow */
                     $versionRow = $grouped->match(['version_id' => $versionId])->first();
 
                     foreach ($this->_config['additionalVersionFields'] as $mappedField => $field) {
@@ -361,10 +353,11 @@ class VersionBehavior extends Behavior
                     }
 
                     $version = new $entityClass(
-                        $keys + $versionData, [
+                        $keys + $versionData,
+                        [
                         'markNew' => false,
                         'useSetters' => false,
-                        'markClean' => true
+                        'markClean' => true,
                         ]
                     );
                     $result[$versionId] = $version;
@@ -384,7 +377,6 @@ class VersionBehavior extends Behavior
      * Returns the versions of a specific entity.
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity.
-     *
      * @return \Cake\Collection\CollectionInterface
      */
     public function getVersions(EntityInterface $entity)
@@ -429,7 +421,6 @@ class VersionBehavior extends Behavior
      * Returns an array with foreignKey value.
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity.
-     *
      * @return array
      */
     protected function extractForeignKey($entity)
@@ -445,7 +436,6 @@ class VersionBehavior extends Behavior
      * Returns default version association name.
      *
      * @param string $field Field name.
-     *
      * @return string
      */
     protected function associationName($field = null)
@@ -482,7 +472,6 @@ class VersionBehavior extends Behavior
      *
      * @param array  $fields    Fields to convert
      * @param string $direction Direction (toPHP or toDatabase)
-     *
      * @return array
      */
     protected function convertFieldsToType(array $fields, $direction)
