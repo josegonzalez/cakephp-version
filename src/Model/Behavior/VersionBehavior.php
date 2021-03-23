@@ -233,7 +233,7 @@ class VersionBehavior extends Behavior
     public function afterSave(Event $event, EntityInterface $entity)
     {
         $property = $this->versionAssociation()->getProperty();
-        $entity->unsetProperty($property);
+        $entity->unset($property);
     }
 
     /**
