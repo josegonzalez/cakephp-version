@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Josegonzalez\Version\Event;
 
 use Cake\Event\Event as CakeEvent;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
-use Cake\Event\EventManagerTrait;
 
 /**
  * Class EventListener
@@ -28,7 +28,7 @@ use Cake\Event\EventManagerTrait;
  */
 abstract class EventListener implements EventListenerInterface
 {
-    use EventManagerTrait;
+    use EventDispatcherTrait;
 
     /**
      * The CakeEvent attached to this class
@@ -79,7 +79,7 @@ abstract class EventListener implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         $methodMap = [
             'config/routes' => 'beforeRenderRoutes',
