@@ -468,13 +468,13 @@ class VersionBehaviorTest extends TestCase
         );
         $table->addBehavior('Josegonzalez/Version.Version');
 
-        $this->assertTrue($table->associations()->has('articleversion'));
-        $versions = $table->getAssociation('articleversion');
+        $this->assertTrue($table->associations()->has('ArticleVersion'));
+        $versions = $table->getAssociation('ArticleVersion');
         $this->assertInstanceOf('Cake\Orm\Association\HasMany', $versions);
         $this->assertEquals('__version', $versions->getProperty());
 
-        $this->assertTrue($table->associations()->has('articlebodyversion'));
-        $bodyVersions = $table->getAssociation('articlebodyversion');
+        $this->assertTrue($table->associations()->has('ArticleBodyVersion'));
+        $bodyVersions = $table->getAssociation('ArticleBodyVersion');
         $this->assertInstanceOf('Cake\Orm\Association\HasMany', $bodyVersions);
         $this->assertEquals('body_version', $bodyVersions->getProperty());
     }
