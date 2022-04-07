@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -82,7 +83,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -119,7 +120,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -139,7 +140,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $config = [
@@ -167,7 +168,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -212,7 +213,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior('Josegonzalez/Version.Version', ['fields' => 'title']);
@@ -242,7 +243,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior('Josegonzalez/Version.Version', ['onlyDirty' => true]);
@@ -273,7 +274,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior('Josegonzalez/Version.Version', ['fields' => 'title']);
@@ -294,7 +295,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -335,7 +336,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -376,15 +377,15 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'ArticlesTags',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior(
             'Josegonzalez/Version.Version',
             [
-            'fields' => 'sort_order',
-            'versionTable' => 'articles_tags_versions',
-            'foreignKey' => ['article_id', 'tag_id'],
+                'fields' => 'sort_order',
+                'versionTable' => 'articles_tags_versions',
+                'foreignKey' => ['article_id', 'tag_id'],
             ]
         );
 
@@ -403,15 +404,15 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'ArticlesTags',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior(
             'Josegonzalez/Version.Version',
             [
-            'fields' => 'sort_order',
-            'versionTable' => 'articles_tags_versions',
-            'foreignKey' => ['article_id', 'tag_id'],
+                'fields' => 'sort_order',
+                'versionTable' => 'articles_tags_versions',
+                'foreignKey' => ['article_id', 'tag_id'],
             ]
         );
 
@@ -433,14 +434,14 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior(
             'Josegonzalez/Version.Version',
             [
-            'versionTable' => 'versions_with_user',
-            'additionalVersionFields' => ['created', 'user_id'],
+                'versionTable' => 'versions_with_user',
+                'additionalVersionFields' => ['created', 'user_id'],
             ]
         );
         $article = $table->find('all')->first();
@@ -463,7 +464,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -490,7 +491,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -515,7 +516,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $schema = $table->getSchema();
@@ -542,7 +543,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $table->addBehavior('Josegonzalez/Version.Version');
@@ -562,7 +563,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $schema = $table->getSchema();
@@ -579,12 +580,14 @@ class VersionBehaviorTest extends TestCase
             'settings' => json_encode($data),
             'author_id' => '1',
             'body' => 'text',
+            'publish_date' => 'N;',
         ];
-        $fields = $method->invokeArgs($behavior, [$fields, 'toPHP']);
-        $this->assertIsArray($fields['settings']);
-        $this->assertSame($data, $fields['settings']);
-        $this->assertIsInt($fields['author_id']);
-        $this->assertIsString('string', $fields['body']);
+        $convertedFields = $method->invokeArgs($behavior, [$fields, 'toPHP']);
+        $this->assertIsArray($convertedFields['settings']);
+        $this->assertSame($data, $convertedFields['settings']);
+        $this->assertIsInt($convertedFields['author_id']);
+        $this->assertIsString('string', $convertedFields['body']);
+        $this->assertInstanceOf(\DateTimeImmutable::class, $convertedFields['publish_date']);
 
         $data = ['test' => 'array'];
         $fields = [
@@ -611,7 +614,7 @@ class VersionBehaviorTest extends TestCase
         $table = TableRegistry::getTableLocator()->get(
             'Articles',
             [
-            'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
+                'entityClass' => 'Josegonzalez\Version\Test\TestCase\Model\Entity\Test',
             ]
         );
         $behavior = new VersionBehavior($table);
