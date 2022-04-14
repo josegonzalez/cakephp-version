@@ -53,20 +53,22 @@ class ArticlesFixture extends TestFixture
      */
     public $records = [
         [
+            'id' => 1,
             'author_id' => 1,
             'version_id' => 2,
             'title' => 'First Article Version 2',
             'body' => 'First Article Body Version 2',
             'published' => 'N',
-            'published_date' => 'N;'
+            'published_date' => null,
         ],
         [
+            'id' => 2,
             'author_id' => 2,
             'version_id' => 3,
             'title' => 'Second Article Version 3',
             'body' => 'Second Article Body Version 3',
             'published' => 'N',
-            'published_date' => 'O:20:"Cake\I18n\FrozenTime":3:{s:4:"date";s:26:"2022-01-05 10:56:23.000000";s:13:"timezone_type";i:3;s:8:"timezone";s:3:"UTC";}'
+            'published_date' => '2022-01-05 10:56:23',
         ],
     ];
 }

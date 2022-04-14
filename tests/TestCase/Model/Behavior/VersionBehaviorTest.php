@@ -16,10 +16,12 @@ namespace Josegonzalez\Version\Test\TestCase\Model\Behavior;
 
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Josegonzalez\Version\Model\Behavior\VersionBehavior;
+use Josegonzalez\Version\Test\TestCase\Model\Entity\Test;
 use ReflectionObject;
 
 /**
@@ -107,7 +109,7 @@ class VersionBehaviorTest extends TestCase
             ->toArray();
 
         $this->assertEquals(3, $article->version_id);
-        $this->assertCount(13, $results);
+        $this->assertCount(14, $results);
     }
 
     /**
@@ -580,14 +582,12 @@ class VersionBehaviorTest extends TestCase
             'settings' => json_encode($data),
             'author_id' => '1',
             'body' => 'text',
-            'publish_date' => 'N;',
         ];
         $convertedFields = $method->invokeArgs($behavior, [$fields, 'toPHP']);
         $this->assertIsArray($convertedFields['settings']);
         $this->assertSame($data, $convertedFields['settings']);
         $this->assertIsInt($convertedFields['author_id']);
         $this->assertIsString('string', $convertedFields['body']);
-        $this->assertInstanceOf(\DateTimeImmutable::class, $convertedFields['publish_date']);
 
         $data = ['test' => 'array'];
         $fields = [
@@ -624,5 +624,80 @@ class VersionBehaviorTest extends TestCase
         $method->setAccessible(true);
 
         $method->invokeArgs($behavior, [[], 'invalidDirection']);
+    }
+
+    /**
+     * Tests DateTime support
+     *
+     * @return void
+     */
+    public function testDateTimeSupport()
+    {
+        FrozenTime::setTestNow('2022-01-01 00:00:00');
+
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior(VersionBehavior::class);
+        $table->setEntityClass(Test::class);
+
+        $article = $table->save($table->newEntity([
+            'author_id' => 2,
+            'version_id' => 3,
+            'title' => 'Date test',
+            'body' => 'Date test',
+            'published_date' => new FrozenTime(),
+        ]));
+        $table->saveOrFail($article);
+
+        $currentVersion = $article->version($article->version_id, true);
+        $this->assertInstanceOf(FrozenTime::class, $currentVersion->published_date);
+        $this->assertSame('2022-01-01 00:00:00', $currentVersion->published_date->format('Y-m-d H:i:s'));
+
+        $article->title = 'Date test 2';
+        $article->published_date = $article->published_date->addDays(1);
+        $table->saveOrFail($article);
+
+        $currentVersion = $article->version($article->version_id, true);
+        $this->assertInstanceOf(FrozenTime::class, $currentVersion->published_date);
+        $this->assertSame('2022-01-02 00:00:00', $currentVersion->published_date->format('Y-m-d H:i:s'));
+
+        FrozenTime::setTestNow(null);
+    }
+
+    /**
+     * Test null support
+     *
+     * @return void
+     */
+    public function testNullSupport()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior(VersionBehavior::class);
+        $table->setEntityClass(Test::class);
+
+        $article = $article = $table->save($table->newEntity([
+            'author_id' => 2,
+            'version_id' => 3,
+            'title' => 'Date test',
+            'body' => 'Date test',
+            'published_date' => null,
+        ]));
+        $table->saveOrFail($article);
+
+        $currentVersion = $article->version($article->version_id, true);
+        $this->assertNull($currentVersion->published_date);
+
+        $article->title = 'Date test 2';
+        $article->published_date = new FrozenTime();
+        $table->saveOrFail($article);
+
+        $currentVersion = $article->version($article->version_id, true);
+        $this->assertNotNull($currentVersion->published_date);
+
+        $article->title = 'Date test 3';
+        $article->published_date = null;
+        $table->saveOrFail($article);
+
+        $currentVersion = $article->version($article->version_id, true);
+        $this->assertNull($currentVersion->published_date);
     }
 }
