@@ -35,7 +35,7 @@ abstract class EventListener implements EventListenerInterface
      *
      * @var \Cake\Event\Event $event Event instance.
      */
-    protected $event;
+    protected CakeEvent $event;
 
     /**
      * Constructor.
@@ -53,7 +53,7 @@ abstract class EventListener implements EventListenerInterface
      *
      * @return void
      */
-    public function execute()
+    public function execute(): void
     {
         $methods = array_values($this->implementedEvents());
         foreach ($methods as $method) {
@@ -64,10 +64,10 @@ abstract class EventListener implements EventListenerInterface
     /**
      * Check whether or not a bake call is a certain type.
      *
-     * @param string|array $type The type of file you want to check.
+     * @param string $type The type of file you want to check.
      * @return bool Whether or not the bake template is the type you are checking.
      */
-    public function isType($type)
+    public function isType(string $type): bool
     {
         $template = sprintf('Bake/%s.ctp', $type);
 

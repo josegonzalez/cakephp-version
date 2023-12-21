@@ -34,7 +34,7 @@ class VersionListener extends EventListener
      * @param \Cake\Event\Event $event An Event instance
      * @return void
      */
-    public function beforeRenderEntity(Event $event)
+    public function beforeRenderEntity(Event $event): void
     {
         $this->checkAssociation($event, 'versions');
     }
@@ -45,7 +45,7 @@ class VersionListener extends EventListener
      * @param \Cake\Event\Event $event An Event instance
      * @return void
      */
-    public function beforeRenderTestCase(Event $event)
+    public function beforeRenderTestCase(Event $event): void
     {
         $name = $event->subject->viewVars['subject'];
         $pattern = '/^' . preg_quote($name) . '_(\w+)_version$/';
@@ -62,7 +62,7 @@ class VersionListener extends EventListener
      * @param \Cake\Event\Event $event An Event instance
      * @return void
      */
-    public function beforeRenderTable(Event $event)
+    public function beforeRenderTable(Event $event): void
     {
         $this->checkAssociation($event, 'versions');
         $this->fixVersionTables($event);
@@ -74,7 +74,7 @@ class VersionListener extends EventListener
      * @param \Cake\Event\Event $event An Event instance
      * @return void
      */
-    protected function fixVersionTables(Event $event)
+    protected function fixVersionTables(Event $event): void
     {
         if (!preg_match('/Versions$/', $event->subject->viewVars['name'])) {
             return;
@@ -95,7 +95,7 @@ class VersionListener extends EventListener
      * @param string $tableSuffix a suffix for the primary table
      * @return bool true if modified, false otherwise
      */
-    protected function checkAssociation(Event $event, $tableSuffix)
+    protected function checkAssociation(Event $event, string $tableSuffix): bool
     {
         $subject = $event->subject;
         $connection = ConnectionManager::get($subject->viewVars['connection']);
@@ -122,7 +122,7 @@ class VersionListener extends EventListener
      * @param \Cake\Event\Event $event An Event instance
      * @return array
      */
-    protected function modifyBelongsTo(Event $event)
+    protected function modifyBelongsTo(Event $event): array
     {
         $belongsTo = $event->subject->viewVars['associations']['belongsTo'];
 
@@ -143,7 +143,7 @@ class VersionListener extends EventListener
      * @param \Cake\Event\Event $event An Event instance
      * @return array
      */
-    protected function modifyRulesChecker(Event $event)
+    protected function modifyRulesChecker(Event $event): array
     {
         $rulesChecker = $event->subject->viewVars['rulesChecker'];
 
