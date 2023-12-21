@@ -23,8 +23,8 @@ use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Association;
 use Cake\ORM\Behavior;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use DateTime;
@@ -47,6 +47,8 @@ use InvalidArgumentException;
  */
 class VersionBehavior extends Behavior
 {
+    use LocatorAwareTrait;
+
     /**
      * Default config
      *
@@ -178,7 +180,7 @@ class VersionBehavior extends Behavior
         }
         $created = new DateTime();
         $new = [];
-        $entityClass = TableRegistry::getTableLocator()->get($this->_config['versionTable'])->getEntityClass();
+        $entityClass = $this->getTableLocator()->get($this->_config['versionTable'])->getEntityClass();
         foreach ($values as $field => $content) {
             if (in_array($field, $primaryKey) || $field == $versionField) {
                 continue;
@@ -236,7 +238,7 @@ class VersionBehavior extends Behavior
      */
     public function getVersionId(EntityInterface $entity): int
     {
-        $table = TableRegistry::getTableLocator()->get($this->_config['versionTable']);
+        $table = $this->getTableLocator()->get($this->_config['versionTable']);
         $extractedKey = $this->extractForeignKey($entity);
 
         //If any extracted key is null (in case of new entity), don't trigger db-query.
