@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Josegonzalez\Version\Model\Behavior\Version;
 
-use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Entity;
 
@@ -38,20 +37,17 @@ trait VersionTrait
     public function version(int $versionId, bool $reset = false): ?Entity
     {
         $versions = $this->versions($reset);
-        if (empty($versions[$versionId])) {
-            return null;
-        }
 
-        return $versions[$versionId];
+        return $versions[$versionId] ?? null;
     }
 
     /**
      * Retrieves the related versions for the current entity
      *
      * @param bool $reset If true, will re-retrieve the related version collection
-     * @return \Cake\Collection\CollectionInterface
+     * @return array<\Cake\ORM\Entity>
      */
-    public function versions(bool $reset = false): CollectionInterface
+    public function versions(bool $reset = false): array
     {
         if ($reset === false && $this->has('_versions')) {
             return $this->get('_versions');

@@ -57,7 +57,7 @@ abstract class EventListener implements EventListenerInterface
     {
         $methods = array_values($this->implementedEvents());
         foreach ($methods as $method) {
-            $this->dispatchEvent(sprintf('Bake.%s', $method), null, $this->event->subject);
+            $this->dispatchEvent(sprintf('Bake.%s', $method), [], $this->event->getSubject());
         }
     }
 

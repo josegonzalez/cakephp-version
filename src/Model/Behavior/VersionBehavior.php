@@ -16,11 +16,10 @@ namespace Josegonzalez\Version\Model\Behavior;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\Event;
-use Cake\Event\EventManager;
 use Cake\ORM\Association;
 use Cake\ORM\Behavior;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -29,6 +28,7 @@ use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use DateTime;
 use InvalidArgumentException;
+use function Cake\Core\namespaceSplit;
 
 /**
  * This behavior provides a way to version dynamic data by keeping versions
@@ -54,7 +54,7 @@ class VersionBehavior extends Behavior
      *
      * These are merged with user-provided configuration when the behavior is used.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
         'implementedFinders' => ['versions' => 'findVersions'],
@@ -196,9 +196,8 @@ class VersionBehavior extends Behavior
                 'created' => $created,
             ] + $this->extractForeignKey($entity);
 
-            $event = new Event('Model.Version.beforeSave', $this, $options);
-            $userData = EventManager::instance()->dispatch($event);
-            if (isset($userData) && $userData->getResult() !== null && is_array($userData->getResult())) {
+            $userData = $this->_table->dispatchEvent('Model.Version.beforeSave', (array)$options);
+            if ($userData !== null && $userData->getResult() !== null && is_array($userData->getResult())) {
                 $data = array_merge($data, $userData->getResult());
             }
 
@@ -289,7 +288,7 @@ class VersionBehavior extends Behavior
 
         return $query
             ->contain(
-                [$name => function (Query $q) use ($name, $options, $query) {
+                [$name => function (Query $q) use ($name, $options) {
                     if (!empty($options['primaryKey'])) {
                         $foreignKey = (array)$this->_config['foreignKey'];
                         $aliasedFK = [];
@@ -307,7 +306,7 @@ class VersionBehavior extends Behavior
                     return $q;
                 }]
             )
-            ->formatResults([$this, 'groupVersions'], $query::PREPEND);
+            ->formatResults($this->groupVersions(...), $query::PREPEND);
     }
 
     /**
@@ -371,9 +370,9 @@ class VersionBehavior extends Behavior
      * Returns the versions of a specific entity.
      *
      * @param \Cake\Datasource\EntityInterface $entity Entity.
-     * @return \Cake\Collection\CollectionInterface
+     * @return array<\Cake\Datasource\EntityInterface>
      */
-    public function getVersions(EntityInterface $entity): CollectionInterface
+    public function getVersions(EntityInterface $entity): array
     {
         $primaryKey = (array)$this->_table->getPrimaryKey();
 
@@ -386,8 +385,8 @@ class VersionBehavior extends Behavior
         }
         $entities = $query->where($conditions)->all();
 
-        if (empty($entities)) {
-            return new Collection([]);
+        if ($entities->isEmpty()) {
+            return [];
         }
 
         $entity = $entities->first();
@@ -478,7 +477,7 @@ class VersionBehavior extends Behavior
         $driver = $this->_table->getConnection()->getDriver();
         foreach ($fields as $field => $content) {
             $column = $this->_table->getSchema()->getColumn($field);
-            $type = Type::build($column['type']);
+            $type = TypeFactory::build($column['type']);
 
             $fields[$field] = $type->{$direction}($content, $driver);
         }

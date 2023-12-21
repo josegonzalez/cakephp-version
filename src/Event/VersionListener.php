@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Josegonzalez\Version\Event;
 
+use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventInterface;
 use Cake\Utility\Hash;
@@ -47,11 +48,11 @@ class VersionListener extends EventListener
      */
     public function beforeRenderTestCase(EventInterface $event): void
     {
-        $name = $event->subject->viewVars['subject'];
+        $name = $event->getSubject()->viewVars['subject'];
         $pattern = '/^' . preg_quote($name) . '_(\w+)_version$/';
-        foreach (array_keys($event->subject->viewVars['fixtures']) as $key) {
+        foreach (array_keys($event->getSubject()->viewVars['fixtures']) as $key) {
             if (preg_match($pattern, $key)) {
-                unset($event->subject->viewVars['fixtures'][$key]);
+                unset($event->getSubject()->viewVars['fixtures'][$key]);
             }
         }
     }
@@ -76,14 +77,14 @@ class VersionListener extends EventListener
      */
     protected function fixVersionTables(EventInterface $event): void
     {
-        if (!preg_match('/Versions$/', $event->subject->viewVars['name'])) {
+        if (!preg_match('/Versions$/', $event->getSubject()->viewVars['name'])) {
             return;
         }
 
-        unset($event->subject->viewVars['rulesChecker']['version_id']);
-        foreach ($event->subject->viewVars['associations']['belongsTo'] as $i => $association) {
+        unset($event->getSubject()->viewVars['rulesChecker']['version_id']);
+        foreach ($event->getSubject()->viewVars['associations']['belongsTo'] as $i => $association) {
             if ($association['alias'] === 'Versions' && $association['foreignKey'] === 'version_id') {
-                unset($event->subject->viewVars['associations']['belongsTo'][$i]);
+                unset($event->getSubject()->viewVars['associations']['belongsTo'][$i]);
             }
         }
     }
@@ -97,21 +98,22 @@ class VersionListener extends EventListener
      */
     protected function checkAssociation(EventInterface $event, string $tableSuffix): bool
     {
-        $subject = $event->subject;
+        $subject = $event->getSubject();
         $connection = ConnectionManager::get($subject->viewVars['connection']);
+        assert($connection instanceof Connection);
         $schema = $connection->getSchemaCollection();
 
-        $versionTable = sprintf('%s_%s', Hash::get($event->subject->viewVars, 'table'), $tableSuffix);
+        $versionTable = sprintf('%s_%s', Hash::get($event->getSubject()->viewVars, 'table'), $tableSuffix);
         if (!in_array($versionTable, $schema->listTables())) {
             return false;
         }
 
-        $event->subject->viewVars['behaviors']['Josegonzalez/Version.Version'] = [
+        $event->getSubject()->viewVars['behaviors']['Josegonzalez/Version.Version'] = [
             sprintf("'versionTable' => '%s'", $versionTable),
         ];
 
-        $event->subject->viewVars['associations']['belongsTo'] = $this->modifyBelongsTo($event);
-        $event->subject->viewVars['rulesChecker'] = $this->modifyRulesChecker($event);
+        $event->getSubject()->viewVars['associations']['belongsTo'] = $this->modifyBelongsTo($event);
+        $event->getSubject()->viewVars['rulesChecker'] = $this->modifyRulesChecker($event);
 
         return true;
     }
@@ -124,7 +126,7 @@ class VersionListener extends EventListener
      */
     protected function modifyBelongsTo(EventInterface $event): array
     {
-        $belongsTo = $event->subject->viewVars['associations']['belongsTo'];
+        $belongsTo = $event->getSubject()->viewVars['associations']['belongsTo'];
 
         foreach ($belongsTo as $i => $association) {
             if ($association['alias'] !== 'Versions' || $association['foreignKey'] !== 'version_id') {
@@ -145,7 +147,7 @@ class VersionListener extends EventListener
      */
     protected function modifyRulesChecker(EventInterface $event): array
     {
-        $rulesChecker = $event->subject->viewVars['rulesChecker'];
+        $rulesChecker = $event->getSubject()->viewVars['rulesChecker'];
 
         foreach ($rulesChecker as $key => $config) {
             if (Hash::get($config, 'extra') !== 'Versions' || $key !== 'version_id') {
