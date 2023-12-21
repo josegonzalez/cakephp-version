@@ -10,6 +10,9 @@ use Josegonzalez\Version\Event\VersionListener;
 
 class VersionPlugin extends BasePlugin
 {
+    /**
+     * @inheritDoc
+     */
     public function bootstrap(PluginApplicationInterface $app): void
     {
         if (PHP_SAPI === 'cli') {
@@ -17,11 +20,16 @@ class VersionPlugin extends BasePlugin
         }
     }
 
+    /**
+     * CLI bootstrap
+     *
+     * @param \Cake\Core\PluginApplicationInterface $app Applicaction instance
+     * @return void
+     */
     public function bootstrapCli(PluginApplicationInterface $app): void
     {
-        $app->getEventManager()->on('Bake.beforeRender', function (Event $event) {
+        $app->getEventManager()->on('Bake.beforeRender', function (Event $event): void {
             (new VersionListener($event))->execute();
         });
-
     }
 }
