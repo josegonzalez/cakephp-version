@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Josegonzalez\Version\Event;
 
 use Cake\Datasource\ConnectionManager;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Utility\Hash;
 
 /**
@@ -31,10 +31,10 @@ class VersionListener extends EventListener
     /**
      * Called before the entity template is rendered
      *
-     * @param \Cake\Event\Event $event An Event instance
+     * @param \Cake\Event\EventInterface $event An Event instance
      * @return void
      */
-    public function beforeRenderEntity(Event $event): void
+    public function beforeRenderEntity(EventInterface $event): void
     {
         $this->checkAssociation($event, 'versions');
     }
@@ -42,10 +42,10 @@ class VersionListener extends EventListener
     /**
      * Called before the test case template is rendered
      *
-     * @param \Cake\Event\Event $event An Event instance
+     * @param \Cake\Event\EventInterface $event An Event instance
      * @return void
      */
-    public function beforeRenderTestCase(Event $event): void
+    public function beforeRenderTestCase(EventInterface $event): void
     {
         $name = $event->subject->viewVars['subject'];
         $pattern = '/^' . preg_quote($name) . '_(\w+)_version$/';
@@ -59,10 +59,10 @@ class VersionListener extends EventListener
     /**
      * Called before the table template is rendered
      *
-     * @param \Cake\Event\Event $event An Event instance
+     * @param \Cake\Event\EventInterface $event An Event instance
      * @return void
      */
-    public function beforeRenderTable(Event $event): void
+    public function beforeRenderTable(EventInterface $event): void
     {
         $this->checkAssociation($event, 'versions');
         $this->fixVersionTables($event);
@@ -71,10 +71,10 @@ class VersionListener extends EventListener
     /**
      * Removes unnecessary associations
      *
-     * @param \Cake\Event\Event $event An Event instance
+     * @param \Cake\Event\EventInterface $event An Event instance
      * @return void
      */
-    protected function fixVersionTables(Event $event): void
+    protected function fixVersionTables(EventInterface $event): void
     {
         if (!preg_match('/Versions$/', $event->subject->viewVars['name'])) {
             return;
@@ -91,11 +91,11 @@ class VersionListener extends EventListener
     /**
      * Attaches the behavior and modifies associations as necessary
      *
-     * @param \Cake\Event\Event $event An Event instance
+     * @param \Cake\Event\EventInterface $event An Event instance
      * @param string $tableSuffix a suffix for the primary table
      * @return bool true if modified, false otherwise
      */
-    protected function checkAssociation(Event $event, string $tableSuffix): bool
+    protected function checkAssociation(EventInterface $event, string $tableSuffix): bool
     {
         $subject = $event->subject;
         $connection = ConnectionManager::get($subject->viewVars['connection']);
@@ -119,10 +119,10 @@ class VersionListener extends EventListener
     /**
      * Removes unnecessary belongsTo associations
      *
-     * @param \Cake\Event\Event $event An Event instance
+     * @param \Cake\Event\EventInterface $event An Event instance
      * @return array
      */
-    protected function modifyBelongsTo(Event $event): array
+    protected function modifyBelongsTo(EventInterface $event): array
     {
         $belongsTo = $event->subject->viewVars['associations']['belongsTo'];
 
@@ -140,10 +140,10 @@ class VersionListener extends EventListener
     /**
      * Removes unnecessary rulesChecker entries
      *
-     * @param \Cake\Event\Event $event An Event instance
+     * @param \Cake\Event\EventInterface $event An Event instance
      * @return array
      */
-    protected function modifyRulesChecker(Event $event): array
+    protected function modifyRulesChecker(EventInterface $event): array
     {
         $rulesChecker = $event->subject->viewVars['rulesChecker'];
 

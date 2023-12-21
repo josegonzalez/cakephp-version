@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Josegonzalez\Version\Event;
 
-use Cake\Event\Event as CakeEvent;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 
 /**
@@ -31,18 +31,18 @@ abstract class EventListener implements EventListenerInterface
     use EventDispatcherTrait;
 
     /**
-     * The CakeEvent attached to this class
+     * The EventInterface attached to this class
      *
-     * @var \Cake\Event\Event $event Event instance.
+     * @var \Cake\Event\EventInterface $event Event instance.
      */
-    protected CakeEvent $event;
+    protected EventInterface $event;
 
     /**
      * Constructor.
      *
-     * @param \Cake\Event\Event $event Event instance.
+     * @param \Cake\Event\EventInterface $event Event instance.
      */
-    public function __construct(CakeEvent $event)
+    public function __construct(EventInterface $event)
     {
         $this->event = $event;
         $this->getEventManager()->on($this);
