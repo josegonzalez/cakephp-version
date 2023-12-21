@@ -19,17 +19,17 @@
         "cakephp/cakephp": "^5.0",
         "cakephp/cakephp-codesniffer": "^5.1",
         "php-coveralls/php-coveralls": "^0.4.0",
+        "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.5"
     },
     "autoload": {
         "psr-4": {
-            "Josegonzalez\\Version\\": "src",
-            "Josegonzalez\\Version\\Test\\Fixture\\": "tests\\Fixture"
+            "Josegonzalez\\Version\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Josegonzalez\\Version\\Test\\": "tests"
+            "Josegonzalez\\Version\\Test\\": "tests/"
         }
     },
 	"config": {

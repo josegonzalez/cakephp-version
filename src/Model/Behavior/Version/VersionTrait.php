@@ -49,7 +49,7 @@ trait VersionTrait
      */
     public function versions(bool $reset = false): array
     {
-        if ($reset === false && $this->has('_versions')) {
+        if ($reset === false && $this->hasValue('_versions')) {
             return $this->get('_versions');
         }
 

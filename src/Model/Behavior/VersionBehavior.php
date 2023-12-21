@@ -322,6 +322,10 @@ class VersionBehavior extends Behavior
 
         return $results->map(
             function (EntityInterface $row) use ($property) {
+                if ($row->has('_versions')) {
+                    return $row;
+                }
+
                 $versionField = $this->_config['versionField'];
                 $versions = (array)$row->get($property);
                 $grouped = new Collection($versions);
