@@ -25,30 +25,14 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class ArticlesFixture extends TestFixture
 {
-    public $table = 'articles';
-
-    /**
-     * Fields property
-     *
-     * @var array
-     */
-    public $fields = [
-        'id' => ['type' => 'integer'],
-        'author_id' => ['type' => 'integer', 'null' => true],
-        'version_id' => ['type' => 'integer', 'null' => true],
-        'title' => ['type' => 'string', 'null' => true],
-        'body' => 'text',
-        'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
-        'settings' => ['type' => 'json', 'null' => true],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
+    public string $table = 'articles';
 
     /**
      * Records property
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['author_id' => 1, 'version_id' => 2, 'title' => 'First Article Version 2', 'body' => 'First Article Body Version 2', 'published' => 'N'],
         ['author_id' => 2, 'version_id' => 3, 'title' => 'Second Article Version 3', 'body' => 'Second Article Body Version 3', 'published' => 'N'],
     ];
