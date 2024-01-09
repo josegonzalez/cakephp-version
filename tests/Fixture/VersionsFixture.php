@@ -30,32 +30,14 @@ class VersionsFixture extends TestFixture
      *
      * @var string
      */
-    public $table = 'version';
-
-    /**
-     * Fields property
-     *
-     * @var array
-     */
-    public $fields = [
-        'id' => ['type' => 'integer'],
-        'version_id' => ['type' => 'integer'],
-        'model' => ['type' => 'string', 'null' => false],
-        'foreign_key' => ['type' => 'integer', 'null' => false],
-        'field' => ['type' => 'string', 'null' => false],
-        'content' => ['type' => 'text'],
-        'custom_field' => ['type' => 'text'],
-        '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id']],
-        ],
-    ];
+    public string $table = 'version';
 
     /**
      * Records property
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'author_id', 'content' => 1],
         ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'title', 'content' => 'First Article'],
         ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'body', 'content' => 'First Article Body'],

@@ -1,7 +1,11 @@
 <?php
-// @codingStandardsIgnoreFile
+declare(strict_types=1);
 
-use Cake\Core\Plugin;
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
+use Cake\Datasource\ConnectionManager;
+use Cake\TestSuite\Fixture\SchemaLoader;
+use Cake\Utility\Filesystem;
 
 $findRoot = function () {
     $root = dirname(__DIR__);
@@ -40,46 +44,48 @@ define('CAKE', CORE_PATH . 'src' . DS);
 require ROOT . '/vendor/autoload.php';
 require CORE_PATH . 'config/bootstrap.php';
 
-Cake\Core\Configure::write('App', ['namespace' => 'App']);
-Cake\Core\Configure::write('debug', true);
+Configure::write('App', ['namespace' => 'App']);
+Configure::write('debug', true);
 
-$TMP = new \Cake\Filesystem\Folder(TMP);
-$TMP->create(TMP . 'cache/models', 0777);
-$TMP->create(TMP . 'cache/persistent', 0777);
-$TMP->create(TMP . 'cache/views', 0777);
+$filesystem = new Filesystem();
+$filesystem->mkdir(TMP . 'cache/models', 0777);
+$filesystem->mkdir(TMP . 'cache/persistent', 0777);
+$filesystem->mkdir(TMP . 'cache/views', 0777);
 
 $cache = [
     'default' => [
-        'engine' => 'File'
+        'engine' => 'File',
     ],
     '_cake_core_' => [
         'className' => 'File',
         'prefix' => 'version_myapp_cake_core_',
         'path' => CACHE . 'persistent/',
         'serialize' => true,
-        'duration' => '+10 seconds'
+        'duration' => '+10 seconds',
     ],
     '_cake_model_' => [
         'className' => 'File',
         'prefix' => 'version_my_app_cake_model_',
         'path' => CACHE . 'models/',
         'serialize' => 'File',
-        'duration' => '+10 seconds'
-    ]
+        'duration' => '+10 seconds',
+    ],
 ];
 
-Cake\Cache\Cache::setConfig($cache);
-Cake\Core\Configure::write('Session', [
-    'defaults' => 'php'
+Cache::setConfig($cache);
+Configure::write('Session', [
+    'defaults' => 'php',
 ]);
-
 
 // Ensure default test connection is defined
 if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
 }
 
-Cake\Datasource\ConnectionManager::setConfig('test', [
+ConnectionManager::setConfig('test', [
     'url' => getenv('db_dsn'),
-    'timezone' => 'UTC'
+    'timezone' => 'UTC',
 ]);
+
+$loader = new SchemaLoader();
+$loader->loadInternalFile(__DIR__ . '/schema.php');

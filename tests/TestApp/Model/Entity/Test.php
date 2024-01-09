@@ -11,7 +11,7 @@ declare(strict_types=1);
  * @link     https://github.com/josegonzalez/cakephp-version
  */
 
-namespace Josegonzalez\Version\Test\TestCase\Model\Entity;
+namespace Josegonzalez\Version\Test\TestApp\Model\Entity;
 
 use Cake\ORM\Entity;
 use Josegonzalez\Version\Model\Behavior\Version\VersionTrait;

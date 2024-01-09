@@ -30,32 +30,14 @@ class VersionsWithUserFixture extends TestFixture
      *
      * @var string
      */
-    public $table = 'versions_with_user';
-
-    /**
-     * Fields property
-     *
-     * @var array
-     */
-    public $fields = [
-        'id' => ['type' => 'integer'],
-        'version_id' => ['type' => 'integer'],
-        'user_id' => ['type' => 'integer'],
-        'model' => ['type' => 'string', 'null' => false],
-        'foreign_key' => ['type' => 'integer', 'null' => false],
-        'field' => ['type' => 'string', 'null' => false],
-        'content' => ['type' => 'text'],
-        '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id']],
-        ],
-    ];
+    public string $table = 'versions_with_user';
 
     /**
      * Records property
      *
      * @var array
      */
-    public $records = [
+    public array $records = [
         ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'author_id', 'content' => 1, 'user_id' => 2],
         ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'title', 'content' => 'First Article', 'user_id' => 2],
         ['version_id' => 1, 'model' => 'Articles', 'foreign_key' => 1, 'field' => 'body', 'content' => 'First Article Body', 'user_id' => 2],

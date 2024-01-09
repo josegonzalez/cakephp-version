@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Josegonzalez\Version\Event;
 
-use Cake\Event\Event as CakeEvent;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 
 /**
@@ -31,18 +31,18 @@ abstract class EventListener implements EventListenerInterface
     use EventDispatcherTrait;
 
     /**
-     * The CakeEvent attached to this class
+     * The EventInterface attached to this class
      *
-     * @var \Cake\Event\Event $event Event instance.
+     * @var \Cake\Event\EventInterface $event Event instance.
      */
-    protected $event;
+    protected EventInterface $event;
 
     /**
      * Constructor.
      *
-     * @param \Cake\Event\Event $event Event instance.
+     * @param \Cake\Event\EventInterface $event Event instance.
      */
-    public function __construct(CakeEvent $event)
+    public function __construct(EventInterface $event)
     {
         $this->event = $event;
         $this->getEventManager()->on($this);
@@ -53,21 +53,21 @@ abstract class EventListener implements EventListenerInterface
      *
      * @return void
      */
-    public function execute()
+    public function execute(): void
     {
         $methods = array_values($this->implementedEvents());
         foreach ($methods as $method) {
-            $this->dispatchEvent(sprintf('Bake.%s', $method), null, $this->event->subject);
+            $this->dispatchEvent(sprintf('Bake.%s', $method), [], $this->event->getSubject());
         }
     }
 
     /**
      * Check whether or not a bake call is a certain type.
      *
-     * @param string|array $type The type of file you want to check.
+     * @param string $type The type of file you want to check.
      * @return bool Whether or not the bake template is the type you are checking.
      */
-    public function isType($type)
+    public function isType(string $type): bool
     {
         $template = sprintf('Bake/%s.ctp', $type);
 
